@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" onDragDetected="#switchToRegister" prefHeight="284.0" prefWidth="389.0" stylesheets="@../css/All.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.libraryproject.libraryproject.LoginController">
+   <children>
+      <Label alignment="CENTER" prefHeight="59.0" prefWidth="507.0" styleClass="Label" text="Library Login" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <TextField layoutX="81.0" layoutY="103.0" prefHeight="38.0" prefWidth="225.0" promptText="Username" styleClass="TextField" />
+      <PasswordField layoutX="80.0" layoutY="165.0" prefHeight="38.0" prefWidth="226.0" promptText="Password" styleClass="TextField" />
+      <Button layoutX="90.0" layoutY="228.0" mnemonicParsing="false" onAction="#switchToPrimary" prefHeight="31.0" prefWidth="85.0" styleClass="Button" text=" Login" />
+      <Button layoutX="182.0" layoutY="231.0" mnemonicParsing="false" onAction="#switchToRegister" style="-fx-background-color: transparent; -fx-text-fill: rgb(51, 153, 255);" text="Register" />
+      <FontAwesomeIcon glyphName="USER" layoutX="274.0" layoutY="135.0" size="30px" text="" />
+      <FontAwesomeIcon glyphName="LOCK" layoutX="276.0" layoutY="195.0" size="30px" />
+   </children>
+</AnchorPane>

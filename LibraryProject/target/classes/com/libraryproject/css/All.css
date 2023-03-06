@@ -1,0 +1,28 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Mar 4, 2023, 3:39:37 PM
+    Author     : vegar
+*/
+
+.Label{
+    -fx-background-color:  rgb(51, 153, 255);
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+}
+.TextField{
+    -fx-border-width: 0 0 0.5 0;
+    -fx-border-color: rgb(51, 163, 255);
+    -fx-background-color: transparent;
+    -fx-font-size: 14px;
+}  
+.TextField:focused{
+    -fx-border-width: 0 0 1 0;
+}
+.Button{
+    -fx-background-color:  rgb(51, 163, 255);
+    -fx-text-fill: white;
+}
+
