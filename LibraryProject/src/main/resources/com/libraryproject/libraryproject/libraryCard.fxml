@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19" fx:controller="com.libraryproject.libraryproject.LibraryCardController">
+   <children>
+      <HBox prefHeight="400.0" prefWidth="600.0">
+         <children>
+            <VBox prefHeight="400.0" prefWidth="174.0">
+               <children>
+                  <ImageView fitHeight="176.0" fitWidth="152.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </VBox>
+            <VBox prefHeight="400.0" prefWidth="429.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="29.0" prefWidth="428.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Name: " />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="NGUYEN VAN A" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="29.0" prefWidth="428.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Gender: " />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="MALE" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="39.0" prefHeight="29.0" prefWidth="428.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Birth Date: " />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="03/11/2002" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="69.0" prefHeight="29.0" prefWidth="428.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Email : " />
+                        <TextField />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="98.0" prefHeight="29.0" prefWidth="428.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Address : " />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="69.0" prefHeight="29.0" prefWidth="428.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Card Expiry Date: " />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="11/12/2024" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="157.0" prefHeight="29.0" prefWidth="428.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Phone Number: " />
+                        <TextField />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
