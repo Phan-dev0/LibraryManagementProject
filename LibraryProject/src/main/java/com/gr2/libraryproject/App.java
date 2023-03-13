@@ -1,4 +1,4 @@
-package com.libraryproject.libraryproject;
+package com.gr2.libraryproject;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

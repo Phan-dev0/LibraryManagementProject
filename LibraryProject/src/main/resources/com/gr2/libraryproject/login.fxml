@@ -7,7 +7,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" onDragDetected="#switchToRegister" prefHeight="284.0" prefWidth="389.0" stylesheets="@../css/All.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.libraryproject.libraryproject.LoginController">
+<AnchorPane id="AnchorPane" onDragDetected="#switchToRegister" prefHeight="284.0" prefWidth="389.0" stylesheets="@../css/All.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gr2.libraryproject.LoginController">
    <children>
       <Label alignment="CENTER" prefHeight="59.0" prefWidth="507.0" styleClass="Label" text="Library Login" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <TextField layoutX="81.0" layoutY="103.0" prefHeight="38.0" prefWidth="225.0" promptText="Username" styleClass="TextField" />

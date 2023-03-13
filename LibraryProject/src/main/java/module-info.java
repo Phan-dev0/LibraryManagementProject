@@ -1,8 +1,8 @@
-module com.libraryproject.libraryproject {
+module com.gr2.libraryproject {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.base;
 
-    opens com.libraryproject.libraryproject to javafx.fxml;
-    exports com.libraryproject.libraryproject;
+    opens com.gr2.libraryproject to javafx.fxml;
+    exports com.gr2.libraryproject;
 }

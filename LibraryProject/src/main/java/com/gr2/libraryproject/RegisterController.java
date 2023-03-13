@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.libraryproject.libraryproject;
+package com.gr2.libraryproject;
 
 import java.io.IOException;
 import javafx.event.ActionEvent;

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
  */
-package com.libraryproject.libraryproject;
+package com.gr2.libraryproject;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -13,7 +13,7 @@ import javafx.fxml.Initializable;
  *
  * @author Cuong0311
  */
-public class LibraryCardController implements Initializable {
+public class BookDetailController implements Initializable {
 
     /**
      * Initializes the controller class.
