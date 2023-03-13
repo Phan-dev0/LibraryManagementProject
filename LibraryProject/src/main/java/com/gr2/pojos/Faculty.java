@@ -15,6 +15,11 @@ public class Faculty {
     public Faculty() {
         
     }
+    
+    public Faculty(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     /**
      * @return the id
