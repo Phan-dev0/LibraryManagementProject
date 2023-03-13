@@ -8,18 +8,9 @@ package com.gr2.pojos;
  *
  * @author Cuong0311
  */
-public class Faculty {
+public class Author {
     private int id;
     private String name;
-    
-    public Faculty() {
-        
-    }
-    
-    public Faculty(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 
     /**
      * @return the id

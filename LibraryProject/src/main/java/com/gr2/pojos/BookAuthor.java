@@ -8,18 +8,10 @@ package com.gr2.pojos;
  *
  * @author Cuong0311
  */
-public class Faculty {
+public class BookAuthor {
     private int id;
-    private String name;
-    
-    public Faculty() {
-        
-    }
-    
-    public Faculty(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+    private int bookId;
+    private int authorId;
 
     /**
      * @return the id
@@ -36,16 +28,30 @@ public class Faculty {
     }
 
     /**
-     * @return the name
+     * @return the bookId
      */
-    public String getName() {
-        return name;
+    public int getBookId() {
+        return bookId;
     }
 
     /**
-     * @param name the name to set
+     * @param bookId the bookId to set
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
+    }
+
+    /**
+     * @return the authorId
+     */
+    public int getAuthorId() {
+        return authorId;
+    }
+
+    /**
+     * @param authorId the authorId to set
+     */
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
     }
 }
