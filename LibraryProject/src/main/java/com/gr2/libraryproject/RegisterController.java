@@ -13,9 +13,5 @@ import javafx.fxml.FXML;
  * @author vegar
  */
 public class RegisterController {
-     @FXML
-    public void switchToLogin(ActionEvent event) throws IOException{
-        App register = new App();
-        register.changeScene("login");
-    }
+    
 }

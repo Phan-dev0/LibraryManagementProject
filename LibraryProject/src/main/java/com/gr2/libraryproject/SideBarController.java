@@ -54,7 +54,7 @@ public class SideBarController implements Initializable {
     @FXML
     private void switchToLogin(ActionEvent event) throws IOException{
         App signOut = new App();
-        signOut.changeScene("login");
+        signOut.changeScene("firstPage");
     }
     
     private void loadPage(String page) throws IOException{
