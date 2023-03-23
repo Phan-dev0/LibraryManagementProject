@@ -1,43 +1,19 @@
--- MySQL dump 10.13  Distrib 8.0.31, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.32, for Linux (x86_64)
 --
--- Host: 127.0.0.1    Database: librarymanagement
+-- Host: localhost    Database: librarymanagement
 -- ------------------------------------------------------
--- Server version	8.0.31
+-- Server version	8.0.32
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `author`
---
-
-DROP TABLE IF EXISTS `author`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `author` (
-  `id` int NOT NULL,
-  `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `author`
---
-
-LOCK TABLES `author` WRITE;
-/*!40000 ALTER TABLE `author` DISABLE KEYS */;
-INSERT INTO `author` VALUES (1,'Nguyễn Đăng Dung'),(3,'Đặng Thanh Hoa'),(4,'Trần Anh Thục Đoan'),(5,'Bùi Ngọc Tuyền'),(6,'Phạm Thanh Tuấn');
-/*!40000 ALTER TABLE `author` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `book`
@@ -49,13 +25,14 @@ DROP TABLE IF EXISTS `book`;
 CREATE TABLE `book` (
   `id` int NOT NULL,
   `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `authors` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `publish_year` int NOT NULL,
   `publish_place` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `import_date` date NOT NULL,
   `location` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `category_id` int NOT NULL,
-  `bookcol` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `state` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_book_category` (`category_id`),
   CONSTRAINT `fk_book_category` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`)
@@ -68,37 +45,8 @@ CREATE TABLE `book` (
 
 LOCK TABLES `book` WRITE;
 /*!40000 ALTER TABLE `book` DISABLE KEYS */;
-INSERT INTO `book` VALUES (1,'Quyền Lập Pháp','Pháp luật - Chính trị',2023,'Hà Nội','2023-03-10','342.01',1,NULL),(2,'Pháp Luật Đại Cương','Pháp luật - Chính trị',2022,'Hà Nội','2022-09-20','340.03',1,NULL),(3,'Luật tố tụng dân sự Việt Nam','Pháp luật - Chính trị',2022,'Hà Nội','2022-12-31','346.43',1,NULL);
+INSERT INTO `book` VALUES (1,'Quyền Lập Pháp','Nguyen Dang Dung','Pháp luật - Chính trị',2023,'Hà Nội','2023-03-10','342.01',1,'FREE'),(2,'Pháp Luật Đại Cương','Bui Ngoc Tuyen, Pham Thanh Tu','Pháp luật - Chính trị',2022,'Hà Nội','2022-09-20','340.03',1,'FREE'),(3,'Luật tố tụng dân sự Việt Nam','Dang Thanh Hoa, Bui Anh Thuc Doan','Pháp luật - Chính trị',2022,'Hà Nội','2022-12-31','346.43',1,'BORROWED');
 /*!40000 ALTER TABLE `book` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `book_author`
---
-
-DROP TABLE IF EXISTS `book_author`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `book_author` (
-  `id` int NOT NULL,
-  `book_id` int NOT NULL,
-  `author_id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_book_author_book` (`book_id`),
-  KEY `fk_book_author_author` (`author_id`),
-  CONSTRAINT `fk_book_author_author` FOREIGN KEY (`author_id`) REFERENCES `author` (`id`),
-  CONSTRAINT `fk_book_author_book` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `book_author`
---
-
-LOCK TABLES `book_author` WRITE;
-/*!40000 ALTER TABLE `book_author` DISABLE KEYS */;
-INSERT INTO `book_author` VALUES (1,1,1),(2,2,5),(3,3,3),(4,3,4),(5,2,6);
-/*!40000 ALTER TABLE `book_author` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -279,4 +227,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-13 12:41:26
+-- Dump completed on 2023-03-23 23:10:33

@@ -13,12 +13,25 @@ import java.util.Date;
 public class Book {
     private int id;
     private String title;
+    private String authors;
     private String description;
     private int publishedYear;
     private String publishedPlace;
     private Date importDate;
     private String location;
     private int categoryId;
+    
+    
+    public Book() {
+        
+    }
+    
+    public Book(String title, String authors, int publishedYear, int cateogoryId) {
+        this.title = title;
+        this.authors = authors;
+        this.publishedYear = publishedYear;
+        this.categoryId = cateogoryId;
+    }
 
     /**
      * @return the id
@@ -130,5 +143,13 @@ public class Book {
      */
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(String authors) {
+        this.authors = authors;
     }
 }
