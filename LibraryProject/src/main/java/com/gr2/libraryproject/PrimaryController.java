@@ -12,6 +12,10 @@ import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
@@ -31,7 +35,9 @@ public class PrimaryController implements Initializable {
     @FXML private RadioButton rdAuthors;
     @FXML private RadioButton rdYear;
     @FXML private RadioButton rdCategory;
+    @FXML private Label lbname;
     
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {

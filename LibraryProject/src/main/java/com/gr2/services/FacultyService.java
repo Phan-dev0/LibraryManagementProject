@@ -6,6 +6,7 @@ package com.gr2.services;
 
 import com.gr2.pojos.Faculty;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -29,7 +30,20 @@ public class FacultyService {
                 facs.add(faculty);
             }
         }
-        facs.forEach(System.out::println);
+//        facs.forEach(System.out::println);
         return facs;
+    }
+    public int getFacultyIdFromFacultyName(String facultyName) throws SQLException{
+        int facultyId = 0;
+        try (Connection conn = JdbcUtils.getConn()){
+            String sql = "select id from faculty where name=?";
+            PreparedStatement stm = conn.prepareCall(sql); // truy van den csdl
+            stm.setString(1, facultyName);
+            ResultSet rs = stm.executeQuery(); 
+            if(rs.next()){
+                facultyId = rs.getInt("id");
+            }
+        }
+        return facultyId;
     }
 }
