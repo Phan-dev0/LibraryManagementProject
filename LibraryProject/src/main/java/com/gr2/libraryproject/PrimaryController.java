@@ -3,6 +3,7 @@ package com.gr2.libraryproject;
 import com.gr2.pojos.Book;
 import com.gr2.pojos.Category;
 import com.gr2.services.BookService;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
@@ -11,12 +12,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -24,20 +29,27 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class PrimaryController implements Initializable {
 
     @FXML
     private TableView<Book> tbBooks;
-    @FXML private TextField txtSearch;
-    @FXML private Button btnSearch;
-    @FXML private RadioButton rdTitle;
-    @FXML private RadioButton rdAuthors;
-    @FXML private RadioButton rdYear;
-    @FXML private RadioButton rdCategory;
-    @FXML private Label lbname;
-    
-
+    @FXML
+    private TextField txtSearch;
+    @FXML
+    private Button btnSearch;
+    @FXML
+    private RadioButton rdTitle;
+    @FXML
+    private RadioButton rdAuthors;
+    @FXML
+    private RadioButton rdYear;
+    @FXML
+    private RadioButton rdCategory;
+    @FXML
+    private Label lbname;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -47,19 +59,20 @@ public class PrimaryController implements Initializable {
         this.rdYear.setToggleGroup(criteriaToggle);
         this.rdCategory.setToggleGroup(criteriaToggle);
         try {
-            this.loadTableColumns();
+            
             this.loadBooks(null, ((RadioButton) criteriaToggle.getSelectedToggle()).getText());
+            this.loadTableColumns();
 
         } catch (SQLException ex) {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.btnSearch.setOnAction(evt -> {
             try {
-                
+
                 String criteria = ((RadioButton) criteriaToggle.getSelectedToggle()).getText();
                 System.out.println(criteria);
                 this.loadBooks(this.txtSearch.getText(), criteria);
-                
+
             } catch (SQLException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -90,9 +103,32 @@ public class PrimaryController implements Initializable {
         TableColumn colDetail = new TableColumn();
         colDetail.setCellFactory(c -> {
             Button btn = new Button("Detail");
-            
+
             TableCell cell = new TableCell();
             cell.setGraphic(btn);
+            btn.setOnAction(evt -> {
+                try {
+                    
+                    Stage mainStage = (Stage) ((Node) evt.getSource()).getScene().getWindow();
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(getClass().getResource("bookDetail.fxml"));
+                    Parent bookViewParent = bookViewParent = loader.load();
+                    Stage dialog = new Stage();
+                    Scene scene = new Scene(bookViewParent);
+                    BookDetailController controller = loader.getController();
+                    Book b = this.tbBooks.getItems().get(cell.getTableRow().getIndex());
+                    controller.setBook(b);
+                    
+                    dialog.initModality(Modality.APPLICATION_MODAL);
+                    dialog.initOwner(mainStage);
+                    dialog.setScene(scene);
+                    
+                    dialog.show();
+                } catch (IOException ex) {
+                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            });
             return cell;
         });
         this.tbBooks.getColumns().addAll(colTitle, colAuthors, colYear, colCate, colDetail);
@@ -100,7 +136,7 @@ public class PrimaryController implements Initializable {
     }
 
     private void loadBooks(String kw, String criteria) throws SQLException {
-        
+
         BookService service = new BookService();
         List<Book> books = service.getBooks(kw, criteria);
         this.tbBooks.getItems().clear();

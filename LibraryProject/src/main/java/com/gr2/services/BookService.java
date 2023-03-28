@@ -49,7 +49,7 @@ public class BookService {
 
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                Book b = new Book(rs.getString("title"), rs.getString("authors"), rs.getInt("publish_year"), rs.getInt("category_id"));
+                Book b = new Book(rs.getString("title"), rs.getString("authors"), rs.getString("description") , rs.getInt("publish_year"), rs.getString("publish_place"), rs.getDate("import_date"), rs.getString("location"), rs.getInt("category_id"), rs.getString("state"));
                 books.add(b);
             }
 

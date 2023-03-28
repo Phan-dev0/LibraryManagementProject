@@ -19,6 +19,7 @@ public class Book {
     private String publishedPlace;
     private Date importDate;
     private String location;
+    private String state;
     private int categoryId;
     
     
@@ -26,11 +27,16 @@ public class Book {
         
     }
     
-    public Book(String title, String authors, int publishedYear, int cateogoryId) {
+    public Book(String title, String authors, String description, int publishedYear, String publishedPlace, Date importDate, String location, int cateogoryId, String state) {
         this.title = title;
         this.authors = authors;
+        this.description = description;
         this.publishedYear = publishedYear;
+        this.publishedPlace = publishedPlace;
+        this.importDate = importDate;
+        this.location = location;
         this.categoryId = cateogoryId;
+        this.state = state;
     }
 
     /**
@@ -151,5 +157,19 @@ public class Book {
 
     public void setAuthors(String authors) {
         this.authors = authors;
+    }
+
+    /**
+     * @return the state
+     */
+    public String getState() {
+        return state;
+    }
+
+    /**
+     * @param state the state to set
+     */
+    public void setState(String state) {
+        this.state = state;
     }
 }
