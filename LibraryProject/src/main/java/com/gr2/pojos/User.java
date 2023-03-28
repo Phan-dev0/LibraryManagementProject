@@ -17,9 +17,32 @@ public class User {
     private String cardId;
     
     {
-        setId(UUID.randomUUID().toString());
+        setId(UUID.randomUUID().toString());    
     }
 
+    public User(String id, String username, String password, String cardId) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.cardId = cardId;
+    }
+
+    public User(String username, String password, String cardId){
+        this.username = username;
+        this.password = password;
+        this.cardId = cardId;
+    }
+
+    @Override
+    public String toString() {
+        return this.username;
+    }
+    
+    
+    public User() {
+    }
+    
+ 
     /**
      * @return the id
      */

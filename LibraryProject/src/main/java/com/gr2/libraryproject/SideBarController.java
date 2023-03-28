@@ -9,19 +9,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
 public class SideBarController implements Initializable {
     
-   
+    @FXML private Label lbYourname;
+
     @FXML
     private BorderPane MainPane;
     @FXML
     private Button nav1;
     
-    
+    Singleton data = Singleton.getInstance();
+
    @Override
     public void initialize(URL location, ResourceBundle resources) {
+        
+        lbYourname.setText(data.getUsername());
         
         try {
             loadPage("availableBooksPage");
@@ -30,6 +35,8 @@ public class SideBarController implements Initializable {
         }
         
     }
+    
+    
     
     @FXML
     private void availableBooksPage(ActionEvent event) throws IOException{

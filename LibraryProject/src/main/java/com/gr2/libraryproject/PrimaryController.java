@@ -8,11 +8,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
 public class PrimaryController implements Initializable {
 
+    @FXML private Label lbname;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
