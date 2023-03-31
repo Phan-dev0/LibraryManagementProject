@@ -81,6 +81,7 @@
                            </children>
                         </HBox>
                         <Button fx:id="btnLend" mnemonicParsing="false" text="Lend" />
+                        <Button layoutX="10.0" layoutY="213.0" mnemonicParsing="false" text="Reserve" />
                      </children>
                   </VBox>
                </children>
