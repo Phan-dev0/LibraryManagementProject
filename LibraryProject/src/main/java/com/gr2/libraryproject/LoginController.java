@@ -4,6 +4,7 @@
  */
 package com.gr2.libraryproject;
 
+import com.gr2.services.LibraryCardService;
 import com.gr2.services.UserService;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -35,7 +36,11 @@ public class LoginController {
         String loginUsername = txtUsername.getText().toString();
         String loginPassword = password.getText().toString();
         
-        data.setUsername(loginUsername);
+        LibraryCardService getYourName = new LibraryCardService();
+        
+        data.setYouName(getYourName.getYourNameByUsername(loginUsername));
+                    
+
         
         UserService checkLogin = new UserService();
         

@@ -17,16 +17,28 @@ import java.sql.Statement;
  * @author vegar
  */
 public class LibraryCardService {
-    public void getYourname() throws SQLException{
-        try(Connection conn = JdbcUtils.getConn()){
+    public String getYourNameByUsername(String username) throws SQLException{
+        String cardId = "";
+        String yourName = "";
+        try(Connection conn = JdbcUtils.getConn()){    
+            String sql = "select card_id from users where username=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, username);
+            ResultSet rs = stm.executeQuery();
+            if(rs.next()){
+                cardId = rs.getString("card_id");
+            }
             
-            String sql = "Select name from library_card";
-            Statement stm = conn.createStatement();
-            ResultSet rs = stm.executeQuery(sql);
-            
-            
-            
+            sql = "select name from library_card where id=?";
+            PreparedStatement stm1 = conn.prepareCall(sql);
+            stm1.setString(1, cardId);
+            ResultSet rs1 = stm1.executeQuery();
+            if(rs1.next()){
+                yourName = rs1.getString("name");
+            }
         }
+        
+        return yourName; 
     }
     
 }

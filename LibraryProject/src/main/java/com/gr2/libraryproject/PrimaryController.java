@@ -86,7 +86,7 @@ public class PrimaryController implements Initializable {
 //        });
 
     }
-
+    
     private void loadTableColumns() {
         TableColumn colTitle = new TableColumn("Title");
         colTitle.setCellValueFactory(new PropertyValueFactory("title"));
