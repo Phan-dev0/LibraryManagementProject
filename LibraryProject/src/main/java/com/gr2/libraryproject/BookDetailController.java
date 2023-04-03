@@ -67,5 +67,10 @@ public class BookDetailController implements Initializable {
         this.txtState.setText(book.getState());
         this.txtLoc.setText(book.getLocation());
     }
-
+    
+    public void lendBook(){
+        btnLend.setOnAction(e ->{
+        
+        });
+    }
 }

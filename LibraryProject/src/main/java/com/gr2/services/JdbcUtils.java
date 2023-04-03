@@ -27,6 +27,5 @@ public class JdbcUtils {
     public static Connection getConn() throws SQLException {
         String username = "root";
         String password = "0308110299Go";
-        return DriverManager.getConnection("jdbc:mysql://localhost/librarymanagement",username , password);
-    }
+        return DriverManager.getConnection("jdbc:mysql://localhost/librarymanagement",username , password);    }
 }

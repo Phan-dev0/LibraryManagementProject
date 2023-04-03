@@ -19,30 +19,31 @@ import java.util.List;
  */
 public class BookService {
 
+    
     public List<Book> getBooks(String kw, String criteria) throws SQLException {
         List<Book> books = new ArrayList<>();
         try (Connection conn = JdbcUtils.getConn()) {
-
             String sql = "SELECT * FROM book";
             if (kw != null && !kw.isEmpty()) {
                 if (criteria.equals("Title") || criteria.equals("Authors")) {
 
-                    sql += " WHERE " + criteria.toLowerCase() + " like concat('%', ?, '%')";
+                    sql += criteria.toLowerCase() + " like concat('%', ?, '%')";
 
                 } else if (criteria.equals("Publish_Year") || criteria.equals("Category_Id")) {
-                    sql += " WHERE " + criteria.toLowerCase() + " = ?";
+                    sql += criteria.toLowerCase() + " = ?";
                 }
             }
 
             PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setString(1, "FREE");
             if (kw != null && !kw.isEmpty()) {
                 if (criteria.equals("Title") || criteria.equals("Authors")) {
 
-                    stm.setString(1, kw);
+                    stm.setString(2, kw);
 
                 } else if (criteria.equals("Publish_Year") || criteria.equals("Category_Id")) {
                     int n = Integer.parseInt(kw);
-                    stm.setInt(1, n);
+                    stm.setInt(2, n);
                 }
             }
 

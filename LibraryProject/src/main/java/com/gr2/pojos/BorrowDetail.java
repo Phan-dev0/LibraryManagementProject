@@ -17,6 +17,14 @@ public class BorrowDetail {
     private String userId;
     private int bookId;
 
+    public BorrowDetail(int bookId, String userId, Date borrowDate, Date returnDate) {
+        this.bookId = bookId;
+        this.userId = userId;
+        this.borrowDate = borrowDate;
+        this.returnDate = returnDate;
+    }
+
+    
     /**
      * @return the id
      */
