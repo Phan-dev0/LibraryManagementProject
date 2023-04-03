@@ -114,13 +114,13 @@ public class PrimaryController implements Initializable {
                     Stage mainStage = (Stage) ((Node) evt.getSource()).getScene().getWindow();
                     FXMLLoader loader = new FXMLLoader();
                     loader.setLocation(getClass().getResource("bookDetail.fxml"));
-                    Parent bookViewParent = bookViewParent = loader.load();
+                    Parent bookViewParent = loader.load();
                     Stage dialog = new Stage();
                     Scene scene = new Scene(bookViewParent);
                     BookDetailController controller = loader.getController();
                     Book b = this.tbBooks.getItems().get(cell.getTableRow().getIndex());
                     controller.setBook(b);
-                    
+                    dialog.setTitle("Book information");
                     dialog.initModality(Modality.APPLICATION_MODAL);
                     dialog.initOwner(mainStage);
                     dialog.setScene(scene);

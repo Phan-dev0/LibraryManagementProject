@@ -81,4 +81,24 @@ public class UserService {
         
     }
     
+    public User getUserById(String id) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            User user = new User();
+            String sql = "select * from user where id like ? ";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, id);
+            
+            
+            ResultSet rs = stm.executeQuery();
+            
+            while (rs.next()) {
+                user.setId(rs.getString("id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setCardId(rs.getString("card_id"));
+            }
+            return user;
+        }
+    }
+    
 }

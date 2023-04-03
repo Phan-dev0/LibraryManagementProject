@@ -15,6 +15,13 @@ public class Reservation {
     private LocalDateTime createdDate;
     private int bookId;
     private String userId;
+    
+    public Reservation() {};
+    public Reservation(LocalDateTime createdDate, int bookId, String userId) {
+        this.createdDate = createdDate;
+        this.bookId = bookId;
+        this.userId = userId;
+    }
 
     /**
      * @return the id

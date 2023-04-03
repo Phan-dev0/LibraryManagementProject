@@ -9,6 +9,7 @@ import com.gr2.pojos.BorrowDetail;
 import com.gr2.services.BookService;
 import com.gr2.services.BorrowDetailService;
 import java.io.IOException;
+import com.gr2.services.UserService;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -32,7 +33,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-
 /**
  * FXML Controller class
  *
@@ -62,12 +62,16 @@ public class BookDetailController implements Initializable {
     @FXML
     private Label lbAuthors;
     @FXML private Button btnLend;
+    @FXML private Button btnReserve;
     
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
         
+        btnReserve.setOnAction(evt -> {
+            UserService userService = new UserService();
+            
+        });
         
         
     }
