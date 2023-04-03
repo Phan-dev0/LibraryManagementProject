@@ -24,6 +24,11 @@ public class BorrowDetail {
         this.returnDate = returnDate;
     }
 
+    public BorrowDetail( Date borrowDate, Date returnDate) {
+       this.borrowDate = borrowDate;
+       this.returnDate = returnDate;
+    }
+
     
     /**
      * @return the id

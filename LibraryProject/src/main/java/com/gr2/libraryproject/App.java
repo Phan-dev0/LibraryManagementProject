@@ -27,13 +27,17 @@ public class App extends Application {
         stage.setScene(scene);
         stage.show();
     }
-   
+    public Stage getStage(){
+        return stg;
+    }
     public void changeScene(String fxml) throws IOException{
         scene = new Scene(loadFXML(fxml));
         stg.setScene(scene);
         stg.show();
     }
-
+    public void closeScene(){
+        stg.close();
+    }
     static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
     }
