@@ -5,6 +5,7 @@
 package com.gr2.libraryproject;
 
 import com.gr2.pojos.Book;
+import com.gr2.services.UserService;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -42,12 +43,16 @@ public class BookDetailController implements Initializable {
     @FXML
     private Label lbAuthors;
     @FXML private Button btnLend;
+    @FXML private Button btnReserve;
     
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
         
+        btnReserve.setOnAction(evt -> {
+            UserService userService = new UserService();
+            
+        });
         
         
     }

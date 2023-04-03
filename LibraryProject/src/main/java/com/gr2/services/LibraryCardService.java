@@ -41,4 +41,8 @@ public class LibraryCardService {
         return yourName; 
     }
     
+    public LibraryCard getLibraryCard(String userId) {
+        return null;
+    }
+    
 }
