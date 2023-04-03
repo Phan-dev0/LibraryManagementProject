@@ -13,6 +13,7 @@ public class Singleton {
     private static final Singleton instance = new Singleton();
     
     private String yourname;
+    private String userId;
     
     
     private Singleton(){}
@@ -27,6 +28,13 @@ public class Singleton {
     
     public void setYouName(String yourname){
         this.yourname = yourname; 
+    }
+     public String getUserId(){
+        return userId;
+    }
+    
+    public void setUserId(String userId){
+        this.userId = userId; 
     }
     
    

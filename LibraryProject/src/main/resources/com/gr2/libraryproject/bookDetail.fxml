@@ -80,7 +80,7 @@
                               <Text fx:id="txtState" strokeType="OUTSIDE" strokeWidth="0.0" text="STATE" />
                            </children>
                         </HBox>
-                        <Button fx:id="btnLend" mnemonicParsing="false" text="Lend" />
+                        <Button fx:id="btnLend" mnemonicParsing="false" onAction="#lendBook" text="Lend" />
                      </children>
                   </VBox>
                </children>
