@@ -69,6 +69,7 @@
                   </Button>
                </children>
             </VBox>
+            <Button layoutX="34.0" layoutY="436.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="130.0" text="Library Card" />
          </children>
       </Pane>
    </left>
