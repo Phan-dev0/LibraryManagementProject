@@ -23,7 +23,7 @@ public class BookService {
     public List<Book> getBooks(String kw, String criteria) throws SQLException {
         List<Book> books = new ArrayList<>();
         try (Connection conn = JdbcUtils.getConn()) {
-            String sql = "SELECT * FROM book";
+            String sql = "SELECT * FROM book where state=?";
             if (kw != null && !kw.isEmpty()) {
                 if (criteria.equals("Title") || criteria.equals("Authors")) {
 
