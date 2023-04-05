@@ -35,7 +35,19 @@ public class UserService {
         }
     }
     
-    
+    public String getUserIdByUsername(String username) throws SQLException{
+        String userId = null;
+        try(Connection conn = JdbcUtils.getConn()){
+            String sql = "select id from users where username=?";
+            PreparedStatement stm = conn.prepareCall(sql); // truy van den csdl
+            stm.setString(1, username);
+            ResultSet rs = stm.executeQuery(); // ket qua khi truy suat
+            if(rs.next()){
+                userId = rs.getString("id");
+            }   
+        }
+        return userId;
+    }
     
     public boolean addUser(LibraryCard card, User user) throws SQLException{
         try(Connection conn = JdbcUtils.getConn()){

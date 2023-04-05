@@ -8,6 +8,7 @@ import com.gr2.services.LibraryCardService;
 import com.gr2.services.UserService;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -36,14 +37,17 @@ public class LoginController {
         String loginUsername = txtUsername.getText().toString();
         String loginPassword = password.getText().toString();
         
+       
+        
         LibraryCardService getYourName = new LibraryCardService();
         
         data.setYouName(getYourName.getYourNameByUsername(loginUsername));
-                    
-
+        
+        UserService getUserId = new UserService();
+        data.setUserId(getUserId.getUserIdByUsername(loginUsername)); 
         
         UserService checkLogin = new UserService();
-        
+  
         boolean isLogin = checkLogin.getLoginAccount(loginUsername, loginPassword);
         if(isLogin){
             App loginToPrimary = new App();
