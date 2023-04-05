@@ -6,6 +6,7 @@ import com.gr2.services.BookService;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -51,6 +52,7 @@ public class PrimaryController implements Initializable {
     @FXML
     private Label lbname;
 
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         ToggleGroup criteriaToggle = new ToggleGroup();

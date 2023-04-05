@@ -85,7 +85,7 @@ public class ReturnBookController implements Initializable{
             Button btn = new Button("Return");
             TableCell cell = new TableCell();
             cell.setGraphic(btn);
-            BorrowDetailService sv = new BorrowDetailService();
+            BookService sv = new BookService();
             
             btn.setOnAction(e -> {
                 BorrowDetail borrowBook = (BorrowDetail) cell.getTableRow().getItem(); // lay ra doi tuong book trong hang
@@ -106,7 +106,7 @@ public class ReturnBookController implements Initializable{
     }
     private void loadBorrowBooks(String kw) throws SQLException {
 
-        BorrowDetailService service = new BorrowDetailService();
+        BookService service = new BookService();
         List<BorrowDetail> borrowBooks = service.getBorrowBook(kw);
         this.tbReturnBookView.getItems().clear();
         this.tbReturnBookView.setItems(FXCollections.observableList(borrowBooks));
