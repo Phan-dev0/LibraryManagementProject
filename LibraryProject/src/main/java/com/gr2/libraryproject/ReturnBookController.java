@@ -34,36 +34,38 @@ import javafx.stage.Stage;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
  * @author vegar
  */
-public class ReturnBookController implements Initializable{
-    @FXML private TableView<BorrowDetail> tbReturnBookView; 
-    @FXML private TextField txtSearch;
-    @FXML private Button btnSeach;
+public class ReturnBookController implements Initializable {
 
-     @Override
+    @FXML
+    private TableView<BorrowDetail> tbReturnBookView;
+    @FXML
+    private TextField txtSearch;
+    @FXML
+    private Button btnSeach;
+
+    @Override
     public void initialize(URL url, ResourceBundle rb) {
-         try {
-             this.loadTableColumns();
-             this.loadBorrowBooks(null);
-        }catch (SQLException ex) {
+        try {
+            this.loadTableColumns();
+            this.loadBorrowBooks(null);
+        } catch (SQLException ex) {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.btnSeach.setOnAction(e ->{
+        this.btnSeach.setOnAction(e -> {
             try {
-              this.loadBorrowBooks(txtSearch.getText());
+                this.loadBorrowBooks(txtSearch.getText());
             } catch (SQLException ex) {
                 Logger.getLogger(ReturnBookController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-         
-         
+
     }
-   
-    public void loadTableColumns(){
+
+    public void loadTableColumns() {
         TableColumn colBookId = new TableColumn("Book ID");
         colBookId.setCellValueFactory(new PropertyValueFactory("bookId"));
         colBookId.setPrefWidth(50);
@@ -71,39 +73,52 @@ public class ReturnBookController implements Initializable{
         TableColumn colUserId = new TableColumn("User ID");
         colUserId.setCellValueFactory(new PropertyValueFactory("userId"));
         colUserId.setPrefWidth(380);
-      
+
         TableColumn colBorrowDate = new TableColumn("Borrow Date");
         colBorrowDate.setCellValueFactory(new PropertyValueFactory("borrowDate"));
         colBorrowDate.setPrefWidth(100);
-        
+
         TableColumn colReturnDate = new TableColumn("Return Date");
         colReturnDate.setCellValueFactory(new PropertyValueFactory("returnDate"));
         colReturnDate.setPrefWidth(100);
-        
+
         TableColumn colBtnReturn = new TableColumn();
-        colBtnReturn.setCellFactory(c ->{
-            Button btn = new Button("Return");
-            TableCell cell = new TableCell();
-            cell.setGraphic(btn);
-            BookService sv = new BookService();
-            
-            btn.setOnAction(e -> {
-                BorrowDetail borrowBook = (BorrowDetail) cell.getTableRow().getItem(); // lay ra doi tuong book trong hang
-                System.out.print(borrowBook.getBookId()); 
-                int bookId = borrowBook.getBookId(); // lay ra bookId    
-                try{
-                    sv.returnBook(bookId);
-                    this.loadTableColumns();
-                    this.loadBorrowBooks(null);
-                }catch (SQLException ex) {
-                    Logger.getLogger(ReturnBookController.class.getName()).log(Level.SEVERE, null, ex);
+        colBtnReturn.setCellFactory(c -> {
+            TableCell<BorrowDetail, Button> cell = new TableCell<>() {
+                @Override
+                protected void updateItem(Button item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    if (!empty) {
+                        Button btn = new Button("Return");
+                        btn.setOnAction(e -> {
+                            BookService sv = new BookService();
+                            BorrowDetail borrowBook = (BorrowDetail) this.getTableRow().getItem(); // lay ra doi tuong book trong hang
+                            System.out.print(borrowBook.getBookId());
+                            int bookId = borrowBook.getBookId(); // lay ra bookId    
+                            try {
+                                sv.returnBook(bookId);
+                                loadTableColumns();
+                                loadBorrowBooks(null);
+                            } catch (SQLException ex) {
+                                Logger.getLogger(ReturnBookController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        });
+                        this.setGraphic(btn);
+                    }
+                    else {
+                        this.setGraphic(null);
+                    }
                 }
-            });
+            };
+            
+            
             return cell;
         });
-        
+
         this.tbReturnBookView.getColumns().addAll(colBookId, colUserId, colBorrowDate, colReturnDate, colBtnReturn);
     }
+
     private void loadBorrowBooks(String kw) throws SQLException {
 
         BookService service = new BookService();
@@ -111,5 +126,5 @@ public class ReturnBookController implements Initializable{
         this.tbReturnBookView.getItems().clear();
         this.tbReturnBookView.setItems(FXCollections.observableList(borrowBooks));
     }
-    
+
 }

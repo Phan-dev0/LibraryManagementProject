@@ -32,16 +32,14 @@ public class ReservationService {
             }
 
             book.setState("RESERVED");
+            if (!bookService.updateBook(book))
+                return false;
             Reservation reservation = new Reservation(LocalDateTime.now(), book.getId(), user.getId());
-            String sql = "insert into reservation values(?, ?, ?)";
+            String sql = "insert into reservation(created_date, book_id, user_id) values(?, ?, ?)";
             PreparedStatement stm = conn.prepareCall(sql);
-            
             stm.setTimestamp(1, Timestamp.valueOf(reservation.getCreatedDate()));
             stm.setInt(2, reservation.getBookId());
             stm.setString(3, reservation.getUserId());
-            if (!bookService.updateBook(book)) {
-                return false;
-            }
             
             int result = stm.executeUpdate();
             return result > 0;

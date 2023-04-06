@@ -6,15 +6,21 @@ package com.gr2.libraryproject;
 
 import com.gr2.pojos.Book;
 import com.gr2.pojos.BorrowDetail;
+import com.gr2.pojos.Reservation;
+import com.gr2.pojos.User;
 import com.gr2.services.BookService;
 import com.gr2.services.BorrowDetailService;
+import com.gr2.services.ReservationService;
 import java.io.IOException;
 import com.gr2.services.UserService;
+import com.gr2.utils.DateUtils;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -33,6 +39,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+
 /**
  * FXML Controller class
  *
@@ -61,21 +68,42 @@ public class BookDetailController implements Initializable {
     private Label lbTitle;
     @FXML
     private Label lbAuthors;
-    @FXML private Button btnLend;
-    @FXML private Button btnReserve;
-    
+    @FXML
+    private Button btnLend;
+    @FXML
+    private Button btnReserve;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+        UserService userService = new UserService();
+        BookService bookService = new BookService();
+        ReservationService reservationService = new ReservationService();
+        BorrowDetailService borrowDetailService = new BorrowDetailService();
+
         btnReserve.setOnAction(evt -> {
-            UserService userService = new UserService();
-            
+            try {
+                User user = userService.getUserById("Blfyr8UfJU6nAtgMxB89");
+                int bookId = bookService.getBookIdByBookTitle(lbTitle.getText());
+
+                reservationService.createReservation(user.getId(), bookId);
+
+            } catch (SQLException ex) {
+                Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
-        
-        
+        btnLend.setOnAction(evt -> {
+            try {
+
+                lendBook(evt);
+
+            } catch (SQLException | IOException ex) {
+                Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        });
+
     }
-    
+
     public void setBook(Book book) {
         this.lbTitle.setText(book.getTitle());
         this.lbAuthors.setText(book.getAuthors());
@@ -86,42 +114,38 @@ public class BookDetailController implements Initializable {
         this.txtState.setText(book.getState());
         this.txtLoc.setText(book.getLocation());
     }
-    
-    public void lendBook(ActionEvent e) throws SQLException, IOException{
+
+    public void lendBook(ActionEvent e) throws SQLException, IOException {
+        DateUtils dateUtils = new DateUtils();
         Singleton dataUserId = Singleton.getInstance();
         BookService getBookId = new BookService();
         String userId = dataUserId.getUserId();
         int bookId = getBookId.getBookIdByBookTitle(lbTitle.getText());
-        
-        // change localDate to -> Date
-        LocalDate borrowLocalDate = LocalDate.now();
-        LocalDate returnLocalDate = borrowLocalDate.plusDays(14);
-        Date borrowDate = asDate(borrowLocalDate);
-        Date returnDate = asDate(returnLocalDate);
-        
 
-                
+        // change localDate to -> Date
+        LocalDate borrowDate = LocalDate.now();
+        LocalDate returnDate = dateUtils.getReturnDate(borrowDate);
+
         BorrowDetail borrowBook = new BorrowDetail(borrowDate, returnDate);
 
-        
         BorrowDetailService lendBook = new BorrowDetailService();
         try {
             lendBook.lendBookBaseOnBookId(borrowBook, userId, bookId);
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        Stage detailStage = (Stage) ((Node) e.getSource()).getScene().getWindow();  
+
+        Stage detailStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
         detailStage.close();
-        App primaryPage = new App();  
-        if(primaryPage.getStage().isShowing()){
+        App primaryPage = new App();
+        if (primaryPage.getStage().isShowing()) {
             primaryPage.changeScene("primary");
         }
-        
+
     }
-    
-    public Date asDate(LocalDate localDate){
+
+    public Date asDate(LocalDate localDate) {
         return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     }
 }

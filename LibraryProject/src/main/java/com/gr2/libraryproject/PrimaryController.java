@@ -2,6 +2,7 @@ package com.gr2.libraryproject;
 
 import com.gr2.pojos.Book;
 import com.gr2.pojos.Category;
+import com.gr2.pojos.Reservation;
 import com.gr2.services.BookService;
 import java.io.IOException;
 import java.net.URL;
@@ -52,7 +53,6 @@ public class PrimaryController implements Initializable {
     @FXML
     private Label lbname;
 
-    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         ToggleGroup criteriaToggle = new ToggleGroup();
@@ -61,7 +61,7 @@ public class PrimaryController implements Initializable {
         this.rdYear.setToggleGroup(criteriaToggle);
         this.rdCategory.setToggleGroup(criteriaToggle);
         try {
-            
+
             this.loadBooks(null, ((RadioButton) criteriaToggle.getSelectedToggle()).getText());
             this.loadTableColumns();
 
@@ -88,7 +88,7 @@ public class PrimaryController implements Initializable {
 //        });
 
     }
-    
+
     private void loadTableColumns() {
         TableColumn colTitle = new TableColumn("Title");
         colTitle.setCellValueFactory(new PropertyValueFactory("title"));
@@ -103,34 +103,47 @@ public class PrimaryController implements Initializable {
         colCate.setCellValueFactory(new PropertyValueFactory("categoryId"));
         colCate.setPrefWidth(100);
         TableColumn colDetail = new TableColumn();
-        colDetail.setCellFactory(c -> {
-            Button btn = new Button("Detail");
 
-            TableCell cell = new TableCell();
-            cell.setGraphic(btn);
-            btn.setOnAction(evt -> {
-                try {
-                    
-                    Stage mainStage = (Stage) ((Node) evt.getSource()).getScene().getWindow();
-                    FXMLLoader loader = new FXMLLoader();
-                    loader.setLocation(getClass().getResource("bookDetail.fxml"));
-                    Parent bookViewParent = loader.load();
-                    Stage dialog = new Stage();
-                    Scene scene = new Scene(bookViewParent);
-                    BookDetailController controller = loader.getController();
-                    Book b = this.tbBooks.getItems().get(cell.getTableRow().getIndex());
-                    controller.setBook(b);
-                    dialog.setTitle("Book information");
-                    dialog.initModality(Modality.APPLICATION_MODAL);
-                    dialog.initOwner(mainStage);
-                    dialog.setScene(scene);
-                    
-                    dialog.show();
-                } catch (IOException ex) {
-                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+
+        colDetail.setCellFactory(c  -> {
+            TableCell<Book, Button> cell = new TableCell<>() {
+                @Override
+                protected void updateItem(Button item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    if (!empty) {
+                        Button btn = new Button();
+                        btn.setText("Detail");
+                        this.setGraphic(btn);
+                        btn.setOnAction(evt -> {
+                            try {
+
+                                Stage mainStage = (Stage) ((Node) evt.getSource()).getScene().getWindow();
+                                FXMLLoader loader = new FXMLLoader();
+                                loader.setLocation(getClass().getResource("bookDetail.fxml"));
+                                Parent bookViewParent = loader.load();
+                                Stage dialog = new Stage();
+                                Scene scene = new Scene(bookViewParent);
+                                BookDetailController controller = loader.getController();
+                                Book b = tbBooks.getItems().get(this.getTableRow().getIndex());
+                                controller.setBook(b);
+                                dialog.setTitle("Book information");
+                                dialog.initModality(Modality.APPLICATION_MODAL);
+                                dialog.initOwner(mainStage);
+                                dialog.setScene(scene);
+
+                                dialog.show();
+                            } catch (IOException ex) {
+                                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+
+                        });
+                    } else {
+                        this.setGraphic(null);
+                    }
                 }
+            };
 
-            });
             return cell;
         });
         this.tbBooks.getColumns().addAll(colTitle, colAuthors, colYear, colCate, colDetail);

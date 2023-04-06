@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +49,8 @@ public class BookService {
             while (rs.next()){
                 int bookId = rs.getInt("book_id");
                 String userId = rs.getString("user_id");
-                Date borrowDate = rs.getDate("borrow_date");
-                Date returnDate = rs.getDate("return_date");
+                LocalDate borrowDate = rs.getDate("borrow_date").toLocalDate();
+                LocalDate returnDate = rs.getDate("return_date").toLocalDate();
                 
                 BorrowDetail borrowBook = new BorrowDetail(bookId, userId, borrowDate, returnDate);
                 borrowBooks.add(borrowBook);
@@ -124,7 +125,7 @@ public class BookService {
             stm.setInt(1, id);
 
             ResultSet rs = stm.executeQuery();
-
+            while(rs.next()) {
             book.setId(rs.getInt("id"));
             book.setAuthors(rs.getString("authors"));
             book.setDescription(rs.getString("description"));
@@ -135,7 +136,7 @@ public class BookService {
             book.setTitle(rs.getString("title"));
             book.setState(rs.getString("state"));
             book.setCategoryId(rs.getInt("category_id"));
-            
+            }
             return book;
         }
     }
