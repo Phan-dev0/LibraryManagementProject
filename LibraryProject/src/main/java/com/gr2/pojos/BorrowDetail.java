@@ -4,6 +4,7 @@
  */
 package com.gr2.pojos;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -12,19 +13,19 @@ import java.util.Date;
  */
 public class BorrowDetail {
     private int id;
-    private Date borrowDate;
-    private Date returnDate;
+    private LocalDate borrowDate;
+    private LocalDate returnDate;
     private String userId;
     private int bookId;
 
-    public BorrowDetail(int bookId, String userId, Date borrowDate, Date returnDate) {
+    public BorrowDetail(int bookId, String userId, LocalDate borrowDate, LocalDate returnDate) {
         this.bookId = bookId;
         this.userId = userId;
         this.borrowDate = borrowDate;
         this.returnDate = returnDate;
     }
 
-    public BorrowDetail( Date borrowDate, Date returnDate) {
+    public BorrowDetail( LocalDate borrowDate, LocalDate returnDate) {
        this.borrowDate = borrowDate;
        this.returnDate = returnDate;
     }
@@ -42,34 +43,6 @@ public class BorrowDetail {
      */
     public void setId(int id) {
         this.id = id;
-    }
-
-    /**
-     * @return the borrowDate
-     */
-    public Date getBorrowDate() {
-        return borrowDate;
-    }
-
-    /**
-     * @param borrowDate the borrowDate to set
-     */
-    public void setBorrowDate(Date borrowDate) {
-        this.borrowDate = borrowDate;
-    }
-
-    /**
-     * @return the returnDate
-     */
-    public Date getReturnDate() {
-        return returnDate;
-    }
-
-    /**
-     * @param returnDate the returnDate to set
-     */
-    public void setReturnDate(Date returnDate) {
-        this.returnDate = returnDate;
     }
 
     /**
@@ -98,5 +71,33 @@ public class BorrowDetail {
      */
     public void setBookId(int bookId) {
         this.bookId = bookId;
+    }
+
+    /**
+     * @return the borrowDate
+     */
+    public LocalDate getBorrowDate() {
+        return borrowDate;
+    }
+
+    /**
+     * @param borrowDate the borrowDate to set
+     */
+    public void setBorrowDate(LocalDate borrowDate) {
+        this.borrowDate = borrowDate;
+    }
+
+    /**
+     * @return the returnDate
+     */
+    public LocalDate getReturnDate() {
+        return returnDate;
+    }
+
+    /**
+     * @param returnDate the returnDate to set
+     */
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
     }
 }

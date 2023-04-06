@@ -6,12 +6,9 @@ package com.gr2.services;
 
 import com.gr2.pojos.BorrowDetail;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Date;
 
 /**
  *
@@ -23,7 +20,7 @@ public class BorrowDetailService {
     
     public void lendBookBaseOnBookId(BorrowDetail borrowBook, String userId, int bookId) throws SQLException{
         try(Connection conn = JdbcUtils.getConn()){
-            
+            conn.setAutoCommit(false);
             String sql = "update book set state=? where id=?";
             PreparedStatement stm1 = conn.prepareCall(sql);
             stm1.setString(1, "BORROWED");
@@ -32,11 +29,12 @@ public class BorrowDetailService {
             
             sql = "insert into borrow_detail(borrow_date, return_date, user_id, book_id) values(?,?,?,?)";
             PreparedStatement stm = conn.prepareCall(sql);
-            stm.setDate(1, new java.sql.Date(borrowBook.getBorrowDate().getTime())); 
-            stm.setDate(2, new java.sql.Date(borrowBook.getReturnDate().getTime()));
+            stm.setDate(1, Date.valueOf(borrowBook.getBorrowDate())); 
+            stm.setDate(2, Date.valueOf(borrowBook.getReturnDate()));
             stm.setString(3, userId);
             stm.setInt(4, bookId);
             stm.executeUpdate();
+            conn.commit();
             
         }
     }
