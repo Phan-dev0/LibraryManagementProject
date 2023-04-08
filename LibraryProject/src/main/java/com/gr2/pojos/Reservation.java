@@ -22,6 +22,13 @@ public class Reservation {
         this.bookId = bookId;
         this.userId = userId;
     }
+    
+    public Reservation(int id, LocalDateTime createdDate, int bookId, String userId) {
+        this.id = id;
+        this.createdDate = createdDate;
+        this.bookId = bookId;
+        this.userId = userId;
+    }
 
     /**
      * @return the id

@@ -72,7 +72,7 @@ public class PrimaryController implements Initializable {
             try {
 
                 String criteria = ((RadioButton) criteriaToggle.getSelectedToggle()).getText();
-                System.out.println(criteria);
+                System.out.println("Criteria is: " + criteria);
                 this.loadBooks(this.txtSearch.getText(), criteria);
 
             } catch (SQLException ex) {
@@ -104,8 +104,7 @@ public class PrimaryController implements Initializable {
         colCate.setPrefWidth(100);
         TableColumn colDetail = new TableColumn();
 
-
-        colDetail.setCellFactory(c  -> {
+        colDetail.setCellFactory(c -> {
             TableCell<Book, Button> cell = new TableCell<>() {
                 @Override
                 protected void updateItem(Button item, boolean empty) {
@@ -127,13 +126,16 @@ public class PrimaryController implements Initializable {
                                 BookDetailController controller = loader.getController();
                                 Book b = tbBooks.getItems().get(this.getTableRow().getIndex());
                                 controller.setBook(b);
+                                System.out.println("Book id: " + b.getId());
+                                controller.hideReserve();
+
                                 dialog.setTitle("Book information");
                                 dialog.initModality(Modality.APPLICATION_MODAL);
                                 dialog.initOwner(mainStage);
                                 dialog.setScene(scene);
 
                                 dialog.show();
-                            } catch (IOException ex) {
+                            } catch (IOException | SQLException ex) {
                                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                             }
 

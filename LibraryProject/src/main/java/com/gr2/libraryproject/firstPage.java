@@ -23,6 +23,7 @@ public class firstPage  implements Initializable {
     
     @FXML
     private BorderPane MainPane;
+   
     @FXML
     private Button nav1;
     
@@ -30,6 +31,7 @@ public class firstPage  implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             loadPage("login");
+            
         } catch (IOException ex) {
             ex.printStackTrace();
         }

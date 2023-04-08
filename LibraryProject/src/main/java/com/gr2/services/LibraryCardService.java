@@ -6,7 +6,7 @@ package com.gr2.services;
 
 import com.gr2.pojos.LibraryCard;
 import java.sql.Connection;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,8 +41,26 @@ public class LibraryCardService {
         return yourName; 
     }
     
-    public LibraryCard getLibraryCard(String userId) {
-        return null;
+     public LibraryCard getLibraryCard(String id) throws SQLException {
+        try(Connection conn = JdbcUtils.getConn()) {
+            String sql = "SELECT * FROM library_card where id=? LIMIT 1";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, id);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                LibraryCard libCard = new LibraryCard(rs.getString("id"), rs.getString("name"),
+                        rs.getInt("gender"), rs.getDate("birth_date").toLocalDate(), 
+                        rs.getString("email"), rs.getDate("expire").toLocalDate(), 
+                        rs.getString("address"), rs.getString("phone_number"),
+                        rs.getString("subject"), rs.getInt("faculty_id"));
+                return libCard;
+                        
+            }
+            return null;
+            
+            
+                    
+        }
     }
     
 }

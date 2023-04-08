@@ -46,4 +46,18 @@ public class FacultyService {
         }
         return facultyId;
     }
+    
+    public Faculty getFaculty(int id) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "SELECT * FROM faculty WHERE id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setInt(1, id);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                Faculty fac = new Faculty(rs.getInt("id"), rs.getString("name"));
+                return fac;
+            }
+            return null;
+        }
+    }
 }

@@ -4,6 +4,7 @@
  */
 package com.gr2.pojos;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -15,9 +16,9 @@ public class LibraryCard {
     private String id;
     private String name;
     private int gender;
-    private Date birthDate;
+    private LocalDate birthDate;
     private String email;
-    private Date expireDate;
+    private LocalDate expireDate;
     private String address;
     private String phoneNumber;
     private String subject;
@@ -33,7 +34,7 @@ public class LibraryCard {
      * @return the id
      */
     
-    public LibraryCard(String id, String name, int gender, Date birthDate, String email, Date expireDate, String address, String phoneNumber, String subject, int faculty_id) {
+    public LibraryCard(String id, String name, int gender, LocalDate birthDate, String email, LocalDate expireDate, String address, String phoneNumber, String subject, int faculty_id) {
         this.id = id;
         this.name = name;
         this.gender = gender;
@@ -45,7 +46,7 @@ public class LibraryCard {
         this.subject = subject;
         this.faculty_id = faculty_id;
     }
-    public LibraryCard(String name, int gender, Date birthDate, int faculty_id) {
+    public LibraryCard(String name, int gender, LocalDate birthDate, int faculty_id) {
         this.name = name;
         this.gender = gender;
         this.birthDate = birthDate;
@@ -96,14 +97,14 @@ public class LibraryCard {
     /**
      * @return the birthDate
      */
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
     /**
      * @param birthDate the birthDate to set
      */
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -124,14 +125,14 @@ public class LibraryCard {
     /**
      * @return the expireDate
      */
-    public Date getExpireDate() {
+    public LocalDate getExpireDate() {
         return expireDate;
     }
 
     /**
      * @param expireDate the expireDate to set
      */
-    public void setExpireDate(Date expireDate) {
+    public void setExpireDate(LocalDate expireDate) {
         this.expireDate = expireDate;
     }
 
