@@ -83,6 +83,7 @@ public class BookService {
         try (Connection conn = JdbcUtils.getConn()) {
             String sql = "SELECT * FROM book where state=?";
             if (kw != null && !kw.isEmpty()) {
+                sql += " AND";
                 if (criteria.equals("Title") || criteria.equals("Authors")) {
 
                     sql += criteria.toLowerCase() + " like concat('%', ?, '%')";
@@ -107,10 +108,10 @@ public class BookService {
 
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                Book b = new Book(rs.getString("title"), rs.getString("authors"), rs.getString("description"), rs.getInt("publish_year"), rs.getString("publish_place"), rs.getDate("import_date"), rs.getString("location"), rs.getInt("category_id"), rs.getString("state"));
+                Book b = new Book(rs.getInt("id") ,rs.getString("title"), rs.getString("authors"), rs.getString("description"), rs.getInt("publish_year"), rs.getString("publish_place"), rs.getDate("import_date"), rs.getString("location"), rs.getInt("category_id"), rs.getString("state"));
                 books.add(b);
+                
             }
-
             return books;
 
         }

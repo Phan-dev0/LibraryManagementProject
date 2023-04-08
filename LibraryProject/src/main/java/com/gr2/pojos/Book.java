@@ -27,7 +27,8 @@ public class Book {
         
     }
     
-    public Book(String title, String authors, String description, int publishedYear, String publishedPlace, Date importDate, String location, int cateogoryId, String state) {
+    public Book(int id, String title, String authors, String description, int publishedYear, String publishedPlace, Date importDate, String location, int cateogoryId, String state) {
+        this.id = id;
         this.title = title;
         this.authors = authors;
         this.description = description;

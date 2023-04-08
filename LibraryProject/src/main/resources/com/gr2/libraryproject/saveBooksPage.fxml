@@ -8,7 +8,7 @@
    <center>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <TableView layoutX="17.0" layoutY="67.0" prefHeight="507.0" prefWidth="695.0" style="-fx-border-color: white;" />
+            <TableView fx:id="tbReserve" layoutX="17.0" layoutY="67.0" prefHeight="507.0" prefWidth="695.0" style="-fx-border-color: white;" />
          </children>
       </AnchorPane>
    </center>

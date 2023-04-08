@@ -9,9 +9,12 @@ import com.gr2.pojos.Reservation;
 import com.gr2.pojos.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -56,6 +59,20 @@ public class ReservationService {
             stm.setInt(1, id);
             
             return stm.executeUpdate() > 0;
+        }
+    }
+    
+    public List<Reservation> getReservations() throws SQLException {
+        List<Reservation> reservations = new ArrayList<>();
+        try(Connection conn = JdbcUtils.getConn()) {
+            String sql = "SELECT * FROM reservation";
+            PreparedStatement stm = conn.prepareCall(sql);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                Reservation r = new Reservation(rs.getInt("id"), rs.getTimestamp("created_date").toLocalDateTime(), rs.getInt("book_id"), rs.getString("user_id"));
+                reservations.add(r);
+            }
+            return reservations;
         }
     }
 

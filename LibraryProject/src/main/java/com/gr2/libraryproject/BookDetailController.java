@@ -73,6 +73,8 @@ public class BookDetailController implements Initializable {
     @FXML
     private Button btnReserve;
 
+    private int Id;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         UserService userService = new UserService();
@@ -84,10 +86,16 @@ public class BookDetailController implements Initializable {
             try {
                 User user = userService.getUserById("Blfyr8UfJU6nAtgMxB89");
                 int bookId = bookService.getBookIdByBookTitle(lbTitle.getText());
-
+                Book b = bookService.getBookById(bookId);
                 reservationService.createReservation(user.getId(), bookId);
+                Stage detailStage = (Stage) ((Node) evt.getSource()).getScene().getWindow();
+                detailStage.close();
+                App primaryPage = new App();
+                if (primaryPage.getStage().isShowing()) {
+                    primaryPage.changeScene("primary");
+                }
 
-            } catch (SQLException ex) {
+            } catch (SQLException | IOException ex) {
                 Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
@@ -105,6 +113,7 @@ public class BookDetailController implements Initializable {
     }
 
     public void setBook(Book book) {
+        this.Id = book.getId();
         this.lbTitle.setText(book.getTitle());
         this.lbAuthors.setText(book.getAuthors());
         this.txtDescription.setText(book.getDescription());
@@ -117,12 +126,12 @@ public class BookDetailController implements Initializable {
 
     public void lendBook(ActionEvent e) throws SQLException, IOException {
         DateUtils dateUtils = new DateUtils();
-        Singleton dataUserId = Singleton.getInstance();
+        UserSession dataUserId = UserSession.getSession();
         BookService getBookId = new BookService();
-        String userId = dataUserId.getUserId();
+        
+        String userId = dataUserId.getUser().getId();
         int bookId = getBookId.getBookIdByBookTitle(lbTitle.getText());
 
-        // change localDate to -> Date
         LocalDate borrowDate = LocalDate.now();
         LocalDate returnDate = dateUtils.getReturnDate(borrowDate);
 
@@ -145,7 +154,9 @@ public class BookDetailController implements Initializable {
 
     }
 
-    public Date asDate(LocalDate localDate) {
-        return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    public void hideReserve() throws SQLException {
+        BookService bookService = new BookService();
+        this.btnReserve.setVisible(!(bookService.getBookById(this.Id).getState().equals("RESERVED")));
+
     }
 }

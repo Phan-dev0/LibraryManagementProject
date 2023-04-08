@@ -108,7 +108,7 @@ public class RegisterController implements Initializable {
             // library card
             String yourName = txtYourName.getText();
             int sex = selectSex();
-            Date date = asDate(birthDate.getValue());   
+            LocalDate date = birthDate.getValue();   
             int facultyId = getFacultyId();
             // user
             String username = txtUsername.getText();
