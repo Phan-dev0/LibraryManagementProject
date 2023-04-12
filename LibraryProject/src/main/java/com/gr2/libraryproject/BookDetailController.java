@@ -72,16 +72,26 @@ public class BookDetailController implements Initializable {
     private Button btnLend;
     @FXML
     private Button btnReserve;
-
+    
+    
     private int Id;
 
+    UserSession session = UserSession.getSession();
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         UserService userService = new UserService();
         BookService bookService = new BookService();
         ReservationService reservationService = new ReservationService();
         BorrowDetailService borrowDetailService = new BorrowDetailService();
+        
+        String subject = session.getUserRole();
+        String studentSubject = "STUDENT";
 
+        if(session.getUserRole().equals(studentSubject)){
+            btnLend.setVisible(false);
+            } 
+        
         btnReserve.setOnAction(evt -> {
             try {
                 User user = userService.getUserById("Blfyr8UfJU6nAtgMxB89");
@@ -125,32 +135,51 @@ public class BookDetailController implements Initializable {
     }
 
     public void lendBook(ActionEvent e) throws SQLException, IOException {
-        DateUtils dateUtils = new DateUtils();
-        UserSession dataUserId = UserSession.getSession();
-        BookService getBookId = new BookService();
-        
-        String userId = dataUserId.getUser().getId();
-        int bookId = getBookId.getBookIdByBookTitle(lbTitle.getText());
+          
+          Stage mainStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+          FXMLLoader loader = new FXMLLoader();
+          loader.setLocation(getClass().getResource("selectUserBorrowBook.fxml"));
+          Parent bookViewParent = loader.load();
+          Stage dialog = new Stage();
+          Scene scene = new Scene(bookViewParent);
+          selectUserBorrowController controller = loader.getController();
+          controller.setStage(mainStage);
+          controller.setTitle(lbTitle.getText());
+          System.out.println(lbTitle.getText());
+          
+          
 
-        LocalDate borrowDate = LocalDate.now();
-        LocalDate returnDate = dateUtils.getReturnDate(borrowDate);
-
-        BorrowDetail borrowBook = new BorrowDetail(borrowDate, returnDate);
-
-        BorrowDetailService lendBook = new BorrowDetailService();
-        try {
-            lendBook.lendBookBaseOnBookId(borrowBook, userId, bookId);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        Stage detailStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-        detailStage.close();
-        App primaryPage = new App();
-        if (primaryPage.getStage().isShowing()) {
-            primaryPage.changeScene("primary");
-        }
+          dialog.setTitle("Select the borrow one ");
+          dialog.initModality(Modality.APPLICATION_MODAL);
+          dialog.initOwner(mainStage);
+          dialog.setScene(scene);
+          dialog.show();
+//        DateUtils dateUtils = new DateUtils();
+//        UserSession dataUserId = UserSession.getSession();
+//        BookService getBookId = new BookService();
+//        
+//        String userId = dataUserId.getUser().getId();
+//        int bookId = getBookId.getBookIdByBookTitle(lbTitle.getText());
+//
+//        LocalDate borrowDate = LocalDate.now();
+//        LocalDate returnDate = dateUtils.getReturnDate(borrowDate);
+//
+//        BorrowDetail borrowBook = new BorrowDetail(borrowDate, returnDate);
+//
+//        BorrowDetailService lendBook = new BorrowDetailService();
+//        try {
+//            lendBook.lendBookBaseOnBookId(borrowBook, userId, bookId);
+//
+//        } catch (SQLException ex) {
+//            Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        Stage detailStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+//        detailStage.close();
+//        App primaryPage = new App();
+//        if (primaryPage.getStage().isShowing()) {
+//            primaryPage.changeScene("primary");
+//        }
 
     }
 

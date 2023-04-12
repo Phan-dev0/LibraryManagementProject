@@ -126,7 +126,7 @@ public class PrimaryController implements Initializable {
                                 BookDetailController controller = loader.getController();
                                 Book b = tbBooks.getItems().get(this.getTableRow().getIndex());
                                 controller.setBook(b);
-                                System.out.println("Book id: " + b.getId());
+//                                System.out.println("Book id: " + b.getId());
                                 controller.hideReserve();
 
                                 dialog.setTitle("Book information");
@@ -153,7 +153,6 @@ public class PrimaryController implements Initializable {
     }
 
     private void loadBooks(String kw, String criteria) throws SQLException {
-
         BookService service = new BookService();
         List<Book> books = service.getBooks(kw, criteria);
         this.tbBooks.getItems().clear();

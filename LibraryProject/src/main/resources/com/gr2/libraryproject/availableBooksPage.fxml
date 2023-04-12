@@ -21,6 +21,8 @@
                   <RadioButton fx:id="rdAuthors" layoutX="147.0" layoutY="106.0" mnemonicParsing="false" text="Authors" />
                   <RadioButton fx:id="rdYear" layoutX="293.0" layoutY="106.0" mnemonicParsing="false" text="Publish_Year" />
                   <RadioButton fx:id="rdCategory" layoutX="421.0" layoutY="106.0" mnemonicParsing="false" text="Category_Id" />
+                  <Button fx:id="addBtn" layoutX="555.0" layoutY="137.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="53.0" text="Add" />
+                  <Button fx:id="deleteBtn" layoutX="621.0" layoutY="138.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="53.0" text="Delete" />
                </children>
             </AnchorPane>
             <Separator layoutX="-6.0" layoutY="33.0" orientation="VERTICAL" prefHeight="494.0" prefWidth="12.0" />
