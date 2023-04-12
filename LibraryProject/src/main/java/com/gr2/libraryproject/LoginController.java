@@ -39,10 +39,14 @@ public class LoginController {
         LibraryCardService librarycardService = new LibraryCardService();
         String loginUsername = txtUsername.getText();
         String loginPassword = password.getText();
+        
         User user = userService.getLoginAccount(loginUsername, loginPassword);
-        if (user != null) {
-            LibraryCard libCard = librarycardService.getLibraryCard(user.getCardId());
-            UserSession.createSession(user, libCard.getSubject());
+        System.out.println(user.getUsername());
+        if (user.getUsername() != null) {
+            LibraryCard libCard = librarycardService.getLibraryCardById(user.getCardId());
+            if(!UserSession.createSession(user, libCard.getSubject())){
+                checkText.setText("ERROR....");
+            }
             App loginToPrimary = new App();
             loginToPrimary.changeScene("primary");
         }

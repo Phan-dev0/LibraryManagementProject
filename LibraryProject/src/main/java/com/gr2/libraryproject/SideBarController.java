@@ -34,6 +34,10 @@ public class SideBarController implements Initializable {
     private Button nav1;
     @FXML
     Button btnCard;
+    @FXML
+    private Button btnNavReturnBook;
+    @FXML
+    private Button btnNavHistoryBook;
 
     UserSession session = UserSession.getSession();
 
@@ -41,6 +45,14 @@ public class SideBarController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         LibraryCardService libcardService = new LibraryCardService();
         LibraryCard libCard;
+        String subject = session.getUserRole();
+        String studentSubject = "STUDENT";
+
+        if(session.getUserRole().equals(studentSubject)){
+            btnNavReturnBook.setVisible(false);
+            btnNavHistoryBook.setVisible(false);
+        } 
+        
         btnCard.setOnAction(evt -> {
 
             try {
@@ -62,7 +74,7 @@ public class SideBarController implements Initializable {
         });
 
         try {
-            libCard = libcardService.getLibraryCard(session.getUser().getCardId());
+            libCard = libcardService.getLibraryCardById(session.getUser().getCardId());
             lbYourname.setText(libCard.getName());
         } catch (SQLException ex) {
             Logger.getLogger(SideBarController.class.getName()).log(Level.SEVERE, null, ex);
@@ -103,6 +115,7 @@ public class SideBarController implements Initializable {
     private void switchToLogin(ActionEvent event) throws IOException {
         App signOut = new App();
         signOut.changeScene("firstPage");
+        session.cleanSession();
     }
 
     private void loadPage(String page) throws IOException {

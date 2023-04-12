@@ -61,7 +61,7 @@ public class LibraryCardController implements Initializable {
         LibraryCardService libCardService = new LibraryCardService();
         FacultyService facultyService = new FacultyService();
         try {
-            LibraryCard libCard = libCardService.getLibraryCard(session.getUser().getCardId());
+            LibraryCard libCard = libCardService.getLibraryCardById(session.getUser().getCardId());
             if (libCard != null) {
                 txtCode.setText(session.getUser().getUsername());
                 txtName.setText(libCard.getName());

@@ -43,14 +43,6 @@
                         <Insets />
                      </VBox.margin>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#returnBooksPage" prefHeight="50.0" prefWidth="204.0" styleClass="nav" text="Return Books">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                     <graphic>
-                        <FontAwesomeIcon fill="WHITE" glyphName="UNDO" wrappingWidth="17.60000705718994" />
-                     </graphic>
-                  </Button>
                   <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#saveBooksPage" prefHeight="50.0" prefWidth="200.0" styleClass="nav" text="Save Books">
                      <font>
                         <Font size="18.0" />
@@ -59,7 +51,15 @@
                         <FontAwesomeIcon fill="WHITE" glyphName="TAG" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#historyPage" prefHeight="50.0" prefWidth="200.0" styleClass="nav" text="History">
+                  <Button fx:id="btnNavReturnBook" alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#returnBooksPage" prefHeight="50.0" prefWidth="204.0" styleClass="nav" text="Return Books">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <graphic>
+                        <FontAwesomeIcon fill="WHITE" glyphName="UNDO" wrappingWidth="17.60000705718994" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="btnNavHistoryBook" alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#historyPage" prefHeight="50.0" prefWidth="200.0" styleClass="nav" text="History">
                      <font>
                         <Font size="18.0" />
                      </font>

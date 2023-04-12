@@ -11,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -41,7 +43,25 @@ public class LibraryCardService {
         return yourName; 
     }
     
-     public LibraryCard getLibraryCard(String id) throws SQLException {
+     public List<LibraryCard> getLibraryCards() throws SQLException{
+         List<LibraryCard> cards = new ArrayList<>();
+         
+         try(Connection conn = JdbcUtils.getConn()) {
+            String sql = "SELECT * FROM library_card";
+            Statement stm = conn.createStatement();
+            ResultSet rs = stm.executeQuery(sql);
+            while(rs.next()){
+                LibraryCard libCard = new LibraryCard(rs.getString("id"), rs.getString("name"),
+                        rs.getInt("gender"), rs.getDate("birth_date").toLocalDate(), 
+                        rs.getString("email"), rs.getDate("expire").toLocalDate(), 
+                        rs.getString("address"), rs.getString("phone_number"),
+                        rs.getString("subject"), rs.getInt("faculty_id"));
+                cards.add(libCard);
+            }
+            return cards;
+         }
+     }
+     public LibraryCard getLibraryCardById(String id) throws SQLException {
         try(Connection conn = JdbcUtils.getConn()) {
             String sql = "SELECT * FROM library_card where id=? LIMIT 1";
             PreparedStatement stm = conn.prepareCall(sql);

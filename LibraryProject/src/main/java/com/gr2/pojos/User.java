@@ -19,7 +19,7 @@ public class User {
     {
         setId(UUID.randomUUID().toString());    
     }
-
+   
     public User(String id, String username, String password, String cardId) {
         this.id = id;
         this.username = username;
@@ -32,7 +32,14 @@ public class User {
         this.password = password;
         this.cardId = cardId;
     }
-
+    
+    public void cleanUser(){
+        this.id = null;
+        this.username = null;
+        this.password = null;
+        this.cardId = null;
+    }
+    
     @Override
     public String toString() {
         return this.username;

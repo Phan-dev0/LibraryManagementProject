@@ -25,10 +25,12 @@ public class UserSession {
         this.userRole = userRole;
     }
     
-    public static void createSession(User user, String userRole) {
+    public static boolean createSession(User user, String userRole) {
         if (instance == null) {
             instance = new UserSession(user, userRole);
+            return true;
         }
+        return false;
     }
     
     public static UserSession getSession() {
@@ -36,8 +38,7 @@ public class UserSession {
     }
     
     public void cleanSession() {
-        user = null;
-        userRole = "";
+        instance = null;
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.util.List;
  */
 public class UserService {
 
+    
     public User getLoginAccount(String username, String password) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
             String sql = "select * from users where username =? and password =? limit 1";
@@ -83,7 +84,20 @@ public class UserService {
         }
 
     }
-
+    
+    public String getUserIdByCardId(String cardId) throws SQLException{
+        String userId = "";
+        try(Connection conn = JdbcUtils.getConn()){
+            String sql = "Select id from users where card_id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, cardId);
+            ResultSet rs = stm.executeQuery();
+            if(rs.next()){
+                userId = rs.getString("id");
+            }
+        }
+        return userId;
+    }
     public User getUserById(String id) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
             User user = new User();
