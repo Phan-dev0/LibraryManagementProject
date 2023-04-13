@@ -11,10 +11,12 @@ import com.gr2.services.ReservationService;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,6 +43,23 @@ public class ReserveBookController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ReservationService reservationService = new ReservationService();
+        List<Reservation> reservations;
+        try {
+            reservations = reservationService.getReservations();
+            reservations.stream().filter(r -> {
+            return this.checkExpire(r);
+        }).collect(Collectors.toList()).forEach(rev -> {
+                try {
+                    reservationService.deleteReservation(rev.getId());
+                } catch (SQLException ex) {
+                    Logger.getLogger(ReserveBookController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        });
+        } catch (SQLException ex) {
+            Logger.getLogger(ReserveBookController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         loadTableColumns();
         try {
             loadReservation();
@@ -91,7 +110,7 @@ public class ReserveBookController implements Initializable {
 
                                 controller.setBook(bookService.getBookById(currentBookId));
                                 controller.hideReserve();
-                                
+
                                 dialog.setTitle("Book information");
                                 dialog.initModality(Modality.APPLICATION_MODAL);
 
@@ -116,13 +135,26 @@ public class ReserveBookController implements Initializable {
         this.tbReserve.getColumns().addAll(colId, colCreatedDate, colBookId, colUserId, colLend);
 
     }
-    
+
     public void loadReservation() throws SQLException {
         ReservationService revService = new ReservationService();
         List<Reservation> reservations = revService.getReservations();
         tbReserve.getItems().clear();
         tbReserve.setItems(FXCollections.observableList(reservations));
-             
+
+    }
+
+    public boolean checkExpire(Reservation reservation) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime reservationTime = reservation.getCreatedDate();
+        int dateOffset = currentTime.getDayOfYear() - reservationTime.getDayOfYear();
+        double currentHours = currentTime.getHour() + currentTime.getMinute() / 60 + currentTime.getSecond() / 3600;
+        double reservationHours = reservationTime.getHour() + reservationTime.getMinute()/60 + reservationTime.getSecond()/3600;
+        double hours = 0;
+        if (dateOffset >= 1) {
+            hours = 24*dateOffset - currentHours - reservationHours;
+        }
+        return hours >= 24;
     }
 
 }

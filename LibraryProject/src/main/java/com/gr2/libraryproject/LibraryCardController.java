@@ -39,22 +39,29 @@ import javafx.stage.Stage;
  */
 public class LibraryCardController implements Initializable {
 
-    @FXML private Text txtCode;
-    @FXML private Text txtName;
-    @FXML private Text txtGender;
-    @FXML private Text txtBirthDate;
-    @FXML private Text txtSubject;
-    @FXML private Text txtFaculty;
-    @FXML private Text txtExpire;
-    @FXML private TextField txtEmail;
-    @FXML private Text txtAddress;
-    @FXML private TextField txtPhone;
-    @FXML private Button saveButton;
+    @FXML
+    private Text txtCode;
+    @FXML
+    private Text txtName;
+    @FXML
+    private Text txtGender;
+    @FXML
+    private Text txtBirthDate;
+    @FXML
+    private Text txtSubject;
+    @FXML
+    private Text txtFaculty;
+    @FXML
+    private Text txtExpire;
+    @FXML
+    private TextField txtEmail;
+    @FXML
+    private TextField txtAddress;
+    @FXML
+    private TextField txtPhone;
+    @FXML
+    private Button saveButton;
 
-
-    
-
-    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         UserSession session = UserSession.getSession();
@@ -65,28 +72,36 @@ public class LibraryCardController implements Initializable {
             if (libCard != null) {
                 txtCode.setText(session.getUser().getUsername());
                 txtName.setText(libCard.getName());
-                txtGender.setText(libCard.getGender() > 0 ? "Male" : "Female");
+                txtGender.setText(libCard.getGender() == 1 ? "Male" : "Female");
                 txtBirthDate.setText(libCard.getBirthDate().toString());
                 txtSubject.setText(libCard.getSubject());
                 Faculty f = facultyService.getFaculty(libCard.getFaculty_id());
-                if (f != null)
+                if (f != null) {
                     txtFaculty.setText(f.getName());
-                else
+                } else {
                     txtFaculty.setText("");
-                txtExpire.setText(libCard.getExpireDate().toString() +
-                          " -> " + libCard.getExpireDate().plusYears(4).toString());
+                }
+                txtExpire.setText(libCard.getExpireDate().toString()
+                        + " -> " + libCard.getExpireDate().plusYears(4).toString());
                 txtEmail.setText(libCard.getEmail());
                 txtAddress.setText(libCard.getAddress());
                 txtPhone.setText(libCard.getPhoneNumber());
                 saveButton.setOnAction(evt -> {
-                  
+                    libCard.setAddress(txtAddress.getText());
+                    libCard.setEmail(txtEmail.getText());
+                    libCard.setPhoneNumber(txtPhone.getText());
+                    try {
+                        libCardService.updateLibraryCard(libCard);
+                    }
+                    catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
                 });
-                
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(LibraryCardController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-    }    
-    
+
+    }
 }

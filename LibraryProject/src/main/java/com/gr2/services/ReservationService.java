@@ -62,6 +62,16 @@ public class ReservationService {
         }
     }
     
+    public boolean deleteReservation(int bookId, String userId) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn())  {
+            String sql = "delete from reservation where book_id = ? and user_id like ?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setInt(1, bookId);
+            stm.setString(2, userId);
+            return stm.executeUpdate() > 0;
+        }
+    }
+    
     public List<Reservation> getReservations() throws SQLException {
         List<Reservation> reservations = new ArrayList<>();
         try(Connection conn = JdbcUtils.getConn()) {
