@@ -82,5 +82,21 @@ public class LibraryCardService {
                     
         }
     }
+     
+    public boolean updateLibraryCard(LibraryCard card) throws SQLException {
+        try(Connection conn = JdbcUtils.getConn()) {
+            String sql = "UPDATE library_card "
+                    + "SET address=?, "
+                    + "phone_number=?, "
+                    + "email=? "
+                    + "WHERE id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, card.getAddress());
+            stm.setString(2, card.getPhoneNumber());
+            stm.setString(3, card.getEmail());
+            stm.setString(4, card.getId());
+            return stm.executeUpdate() > 0;
+        }
+    }
     
 }
