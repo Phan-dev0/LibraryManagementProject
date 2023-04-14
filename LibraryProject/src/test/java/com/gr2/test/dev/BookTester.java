@@ -58,4 +58,40 @@ public class BookTester {
             Logger.getLogger(BookTester.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    @Test
+    public void testGetBookFailed() throws SQLException {
+        try {
+            List<Book> books = bookService.getBooks("Dung", "author");
+            Assertions.assertEquals(books, new ArrayList());
+        } catch (SQLException ex) {
+            Logger.getLogger(BookTester.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Test
+    public void testNotEqualBookList() {
+        try {
+            List<Book> books = bookService.getBooks("", null);
+            List<Book> booksTest = bookService.getBooks("Dung", "authors");
+            Assertions.assertNotEquals(booksTest, books);
+        } catch (SQLException ex) {
+            Logger.getLogger(BookTester.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+//    @Test
+//    public void testEqualBookList() {
+//        try {
+//            List<Book> books = bookService.getBooks("", null);
+//            List<Book> booksTest = bookService.getBooks("Dung", "author");
+//            System.out.println(books);
+//            System.out.println(booksTest);
+//            Assertions.assertEquals(booksTest, books);
+//        } catch (SQLException ex) {
+//            Logger.getLogger(BookTester.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
+    
+  
 }

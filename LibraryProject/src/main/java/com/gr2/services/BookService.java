@@ -21,40 +21,42 @@ import java.util.List;
  */
 public class BookService {
 
-     public int getBookIdByBookTitle(String bookTitle) throws SQLException{
-         int bookId = 0;
-         try(Connection conn = JdbcUtils.getConn()){
-             String sql = "select id from book where title=?";
-             PreparedStatement stm = conn.prepareCall(sql);
-             stm.setString(1, bookTitle);
-             ResultSet rs = stm.executeQuery();
-             if(rs.next()){
-                 bookId = rs.getInt("id");
-             }
-         }
-         return bookId;
-     }
-     
-     public List<BorrowDetail> getBorrowBook(String kw) throws SQLException{
+    public int getBookIdByBookTitle(String bookTitle) throws SQLException {
+        int bookId = 0;
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "select id from book where title=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, bookTitle);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                bookId = rs.getInt("id");
+            }
+        }
+        return bookId;
+    }
+
+    public List<BorrowDetail> getBorrowBook(String kw) throws SQLException {
         List<BorrowDetail> borrowBooks = new ArrayList<>();
-        try(Connection conn =  JdbcUtils.getConn()){
+        try (Connection conn = JdbcUtils.getConn()) {
             int bookId = 0;
             String sql = "select id from book where state=?";
             PreparedStatement stm1 = conn.prepareCall(sql);
             stm1.setString(1, "BORROWED");
             ResultSet rs1 = stm1.executeQuery();
-            while(rs1.next()){
+            while (rs1.next()) {
                 bookId = rs1.getInt("id");
                 sql = "select * From borrow_detail where book_id=?";
-                if(kw != null && !kw.isEmpty())
+                if (kw != null && !kw.isEmpty()) {
                     sql += " and user_id like concat ('%', ?, '%')";
-            
+                }
+
                 PreparedStatement stm = conn.prepareCall(sql);
                 stm.setInt(1, bookId);
-                if(kw != null && !kw.isEmpty())
+                if (kw != null && !kw.isEmpty()) {
                     stm.setString(2, kw);
+                }
                 ResultSet rs = stm.executeQuery();
-                if(rs.next()){
+                if (rs.next()) {
                     int book_Id = rs.getInt("book_id");
                     String userId = rs.getString("user_id");
                     LocalDate borrowDate = rs.getDate("borrow_date").toLocalDate();
@@ -64,64 +66,69 @@ public class BookService {
                     borrowBooks.add(borrowBook);
                 }
             }
-            
-            
+
         }
         return borrowBooks;
     }
-    
-    public boolean returnBook(int bookId) throws SQLException{
-        
-        try(Connection conn = JdbcUtils.getConn()){
-            
+
+    public boolean returnBook(int bookId) throws SQLException {
+
+        try (Connection conn = JdbcUtils.getConn()) {
+
             String sql = "Update book set state=? where id=?";
             PreparedStatement stm1 = conn.prepareCall(sql);
             stm1.setString(1, "FREE");
             stm1.setInt(2, bookId);
             stm1.executeUpdate();
-            
+
             return stm1.executeUpdate() > 0;
-            
+
         }
     }
-    
+
     public List<Book> getBooks(String kw, String criteria) throws SQLException {
         List<Book> books = new ArrayList<>();
-        try (Connection conn = JdbcUtils.getConn()) {
-            String sql = "SELECT * FROM book where state=?";
-            if (kw != null && !kw.isEmpty()) {
-                sql += " AND ";
-                if (criteria.equals("Title") || criteria.equals("Authors")) {
+        if (criteria != null) {
+            criteria = criteria.toLowerCase();
 
-                    sql += criteria.toLowerCase() + " like concat('%', ?, '%')";
+            try (Connection conn = JdbcUtils.getConn()) {
+                String sql = "SELECT * FROM book where state=?";
+                if (kw != null && !kw.isEmpty()) {
+                    sql += " AND ";
+                    if (criteria.equals("title") || criteria.equals("authors")) {
 
-                } else if (criteria.equals("Publish_Year") || criteria.equals("Category_Id")) {
-                    sql += criteria.toLowerCase() + " = ?";
+                        sql += criteria + " like concat('%', ?, '%')";
+
+                    } else if (criteria.equals("publish_year") || criteria.equals("category_id")) {
+                        sql += criteria + " = ?";
+                    }
+                    else {
+                        return books;
+                    }
+                }
+
+                PreparedStatement stm = conn.prepareStatement(sql);
+                stm.setString(1, "FREE");
+                if (kw != null && !kw.isEmpty()) {
+                    if (criteria.equals("title") || criteria.equals("authors")) {
+
+                        stm.setString(2, kw);
+
+                    } else if (criteria.equals("publish_year") || criteria.equals("category_id")) {
+                        int n = Integer.parseInt(kw);
+                        stm.setInt(2, n);
+                    }
+                }
+                ResultSet rs = stm.executeQuery();
+                while (rs.next()) {
+                    Book b = new Book(rs.getInt("id"), rs.getString("title"), rs.getString("authors"), rs.getString("description"), rs.getInt("publish_year"), rs.getString("publish_place"), rs.getDate("import_date"), rs.getString("location"), rs.getInt("category_id"), rs.getString("state"));
+                    books.add(b);
+
                 }
             }
-
-            PreparedStatement stm = conn.prepareStatement(sql);
-            stm.setString(1, "FREE");
-            if (kw != null && !kw.isEmpty()) {
-                if (criteria.equals("Title") || criteria.equals("Authors")) {
-
-                    stm.setString(2, kw);
-
-                } else if (criteria.equals("Publish_Year") || criteria.equals("Category_Id")) {
-                    int n = Integer.parseInt(kw);
-                    stm.setInt(2, n);
-                }
-            }
-
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                Book b = new Book(rs.getInt("id") ,rs.getString("title"), rs.getString("authors"), rs.getString("description"), rs.getInt("publish_year"), rs.getString("publish_place"), rs.getDate("import_date"), rs.getString("location"), rs.getInt("category_id"), rs.getString("state"));
-                books.add(b);
-                
-            }
-            return books;
 
         }
+        return books;
     }
 
     public Book getBookById(int id) throws SQLException {
@@ -133,7 +140,7 @@ public class BookService {
             stm.setInt(1, id);
 
             ResultSet rs = stm.executeQuery();
-            while(rs.next()) {
+            while (rs.next()) {
                 book.setId(rs.getInt("id"));
                 book.setAuthors(rs.getString("authors"));
                 book.setDescription(rs.getString("description"));
@@ -148,13 +155,13 @@ public class BookService {
             return book;
         }
     }
-    
+
     public boolean updateBook(Book book) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
-            String sql = "update book " +
-                    "set id = ?, title = ?, authors = ?, description = ?, publish_year = ?, publish_place = ?, import_date = ?, location = ?, category_id = ?, state = ? " +
-                    "where id = ?";
-            
+            String sql = "update book "
+                    + "set id = ?, title = ?, authors = ?, description = ?, publish_year = ?, publish_place = ?, import_date = ?, location = ?, category_id = ?, state = ? "
+                    + "where id = ?";
+
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setInt(1, book.getId());
             stm.setString(2, book.getTitle());
@@ -167,10 +174,10 @@ public class BookService {
             stm.setInt(9, book.getCategoryId());
             stm.setString(10, book.getState());
             stm.setInt(11, book.getId());
-            
+
             int result = stm.executeUpdate();
             return result > 0;
-            
+
         }
     }
 }
