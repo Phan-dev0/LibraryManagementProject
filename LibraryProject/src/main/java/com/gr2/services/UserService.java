@@ -58,14 +58,16 @@ public class UserService {
         try (Connection conn = JdbcUtils.getConn()) {
             conn.setAutoCommit(false);
 
-            String sql = "insert into library_card(id, name, gender, birth_date, faculty_id) values(?,?,?,?,?)";
+            String sql = "insert into library_card(id, name, gender, birth_date, expire, subject, faculty_id) values(?,?,?,?,?,?,?)";
             PreparedStatement stm = conn.prepareCall(sql);
 
             stm.setString(1, card.getId());
             stm.setString(2, card.getName());
             stm.setInt(3, card.getGender());
             stm.setDate(4, Date.valueOf(card.getBirthDate()));
-            stm.setInt(5, card.getFaculty_id());
+            stm.setDate(5, Date.valueOf(card.getExpireDate()));
+            stm.setString(6, card.getSubject());
+            stm.setInt(7, card.getFaculty_id());
             int r = stm.executeUpdate();
 
             sql = "insert into users(id, username, password, card_id) values(?,?,?,?)";
@@ -116,7 +118,20 @@ public class UserService {
             return user;
         }
     }
-    
+    public List<User> getUsers() throws SQLException {
+        try(Connection conn = JdbcUtils.getConn()) {
+            List<User> users = new ArrayList<>();
+            String sql = "select * from users";
+            PreparedStatement stm = conn.prepareCall(sql);
+            ResultSet rs = stm.executeQuery();
+            while(rs.next()) {
+                User user = new User(rs.getString("id"), rs.getString("username"),
+                        rs.getString("password"), rs.getString("card_id"));
+                users.add(user);
+            }
+            return users;
+        }
+    }
    
 
 }

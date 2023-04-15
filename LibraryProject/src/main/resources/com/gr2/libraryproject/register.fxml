@@ -33,7 +33,7 @@
             <PasswordField fx:id="txtPassword" layoutX="38.0" layoutY="2.0" prefHeight="25.0" prefWidth="196.0" promptText="Password" style="-fx-background-color: transparents;" />
          </children>
       </Pane>
-      <Button fx:id="btnSubmit" layoutX="71.0" layoutY="381.0" mnemonicParsing="false" onAction="#addAccount" prefHeight="34.0" prefWidth="254.0" style="-fx-background-color: rgb(52,153,255); -fx-text-fill: white;" text="Submit">
+      <Button fx:id="btnSubmit" layoutX="71.0" layoutY="381.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="254.0" style="-fx-background-color: rgb(52,153,255); -fx-text-fill: white;" text="Submit">
          <font>
             <Font size="20.0" />
          </font>
@@ -51,7 +51,7 @@
          </children>
       </Pane>
       <DatePicker fx:id="birthDate" layoutX="71.0" layoutY="319.0" prefHeight="34.0" prefWidth="108.0" promptText="Birthday" style="-fx-background-color: transparent;" />
-      <ComboBox fx:id="cbFaculty" layoutX="181.0" layoutY="319.0" onAction="#getFacultyId" prefHeight="34.0" prefWidth="142.0" promptText="Faculty" />
+      <ComboBox fx:id="cbFaculty" layoutX="181.0" layoutY="319.0" prefHeight="34.0" prefWidth="142.0" promptText="Faculty" />
       <RadioButton fx:id="radioBtnMale" layoutX="74.0" layoutY="282.0" mnemonicParsing="false" onAction="#selectSex" prefHeight="30.0" prefWidth="53.0" style="-fx-text-fill: rgb(52,153,255);" text="Male">
          <toggleGroup>
             <ToggleGroup fx:id="sex" />
