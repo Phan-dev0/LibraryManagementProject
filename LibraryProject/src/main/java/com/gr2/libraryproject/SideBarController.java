@@ -4,6 +4,7 @@ import com.gr2.pojos.Book;
 import com.gr2.pojos.LibraryCard;
 import com.gr2.services.LibraryCardService;
 import com.gr2.services.UserService;
+import com.gr2.utils.MessageBox;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -17,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -27,13 +29,16 @@ public class SideBarController implements Initializable {
 
     @FXML
     private Label lbYourname;
-
+    @FXML
+    private Button btnLogout;
     @FXML
     private BorderPane MainPane;
     @FXML
-    private Button nav1;
+    private Button btnNav;
     @FXML
-    Button btnCard;
+    private Button btnSave;
+    @FXML
+    private Button btnCard;
     @FXML
     private Button btnNavReturnBook;
     @FXML
@@ -48,11 +53,11 @@ public class SideBarController implements Initializable {
         String subject = session.getUserRole();
         String studentSubject = "STUDENT";
 
-        if(session.getUserRole().equals(studentSubject)){
+        if (session.getUserRole().equals(studentSubject)) {
             btnNavReturnBook.setVisible(false);
             btnNavHistoryBook.setVisible(false);
-        } 
-        
+        }
+
         btnCard.setOnAction(evt -> {
 
             try {
@@ -72,47 +77,73 @@ public class SideBarController implements Initializable {
             }
 
         });
-
+        this.btnNav.setOnAction(evt -> {
+            try {
+                loadPage("availableBooksPage");
+            } catch (IOException ex) {
+                Logger.getLogger(SideBarController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        this.btnNavHistoryBook.setOnAction(evt -> {
+            try {
+                historyPage();
+            } catch (IOException ex) {
+                Logger.getLogger(SideBarController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        this.btnSave.setOnAction(evt -> {
+            try {
+                saveBooksPage();
+            } catch (IOException ex) {
+                Logger.getLogger(SideBarController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        this.btnNavReturnBook.setOnAction(evt -> {
+            try {
+                returnBooksPage();
+            } catch (IOException ex) {
+                Logger.getLogger(SideBarController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        this.btnLogout.setOnAction(evt -> {
+            try {
+                switchToLogin();
+            } catch (IOException ex) {
+                Logger.getLogger(SideBarController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
         try {
             libCard = libcardService.getLibraryCardById(session.getUser().getCardId());
             lbYourname.setText(libCard.getName());
-        } catch (SQLException ex) {
+            loadPage("availableBooksPage");
+
+        } catch (SQLException | IOException ex) {
+            MessageBox.getMessageBox("ERROR", ex.getMessage(), Alert.AlertType.ERROR).show();
             Logger.getLogger(SideBarController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+    };
 
-        try {
-            loadPage("availableBooksPage");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-    }
-
-    @FXML
-    private void availableBooksPage(ActionEvent event) throws IOException {
+    private void availableBooksPage() throws IOException {
         loadPage("availableBooksPage");
     }
 
-    @FXML
-    private void returnBooksPage(ActionEvent event) throws IOException {
-        nav1.getStyleClass().add("nav");
+    private void returnBooksPage() throws IOException {
+        btnNav.getStyleClass().add("nav");
         loadPage("returnBooksPage");
     }
 
-    @FXML
-    private void saveBooksPage(ActionEvent event) throws IOException {
-        nav1.getStyleClass().add("nav");
+    private void saveBooksPage() throws IOException {
+        btnNav.getStyleClass().add("nav");
         loadPage("saveBooksPage");
     }
 
-    @FXML
-    private void historyPage(ActionEvent event) throws IOException {
-        nav1.getStyleClass().add("nav");
+    private void historyPage() throws IOException {
+        btnNav.getStyleClass().add("nav");
         loadPage("historyPage");
     }
 
-    @FXML
-    private void switchToLogin(ActionEvent event) throws IOException {
+    private void switchToLogin() throws IOException {
         App signOut = new App();
         signOut.changeScene("firstPage");
         session.cleanSession();

@@ -11,7 +11,11 @@ import com.gr2.services.ReservationService;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -48,18 +52,20 @@ public class ReserveBookController implements Initializable {
         try {
             reservations = reservationService.getReservations();
             reservations.stream().filter(r -> {
-            return this.checkExpire(r);
-        }).collect(Collectors.toList()).forEach(rev -> {
+                
+                return this.checkExpire(r);
+                
+            }).collect(Collectors.toList()).forEach(rev -> {
                 try {
                     reservationService.deleteReservation(rev.getId());
                 } catch (SQLException ex) {
                     Logger.getLogger(ReserveBookController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-        });
+            });
         } catch (SQLException ex) {
             Logger.getLogger(ReserveBookController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         loadTableColumns();
         try {
             loadReservation();
@@ -144,16 +150,11 @@ public class ReserveBookController implements Initializable {
     }
 
     public boolean checkExpire(Reservation reservation) {
-        LocalDateTime currentTime = LocalDateTime.now();
-        LocalDateTime reservationTime = reservation.getCreatedDate();
-        int dateOffset = currentTime.getDayOfYear() - reservationTime.getDayOfYear();
-        double currentHours = currentTime.getHour() + currentTime.getMinute() / 60 + currentTime.getSecond() / 3600;
-        double reservationHours = reservationTime.getHour() + reservationTime.getMinute()/60 + reservationTime.getSecond()/3600;
-        double hours = 0;
-        if (dateOffset >= 1) {
-            hours = 24*dateOffset - currentHours - reservationHours;
-        }
-        return hours >= 24;
+        Instant currentTime = LocalDateTime.now().toInstant(ZoneOffset.of("+7"));
+        Instant reservationTime = reservation.getCreatedDate().toInstant(ZoneOffset.of("+7"));
+        Duration timeElapsed = Duration.between(currentTime, reservationTime);
+        double hours = (double)timeElapsed.toSeconds()/ 3600;
+        return Math.abs(hours) >= 24;
     }
 
 }

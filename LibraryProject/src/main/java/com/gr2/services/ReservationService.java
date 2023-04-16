@@ -53,10 +53,14 @@ public class ReservationService {
 
     public boolean deleteReservation(int id) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
+            BookService bookService = new BookService();
+            ReservationService reservationService = new ReservationService();
+            Book book = bookService.getBookById(reservationService.getReservationById(id).getBookId());
+            book.setState("FREE");
+            if (!bookService.updateBook(book)) return false;
             String sql = "delete from reservation where id = ?";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setInt(1, id);
-
             return stm.executeUpdate() > 0;
         }
     }
@@ -90,6 +94,20 @@ public class ReservationService {
                 reservations.add(r);
             }
             return reservations;
+        }
+    }
+    
+    public Reservation getReservationById(int id) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "select * from reservation where id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setInt(1, id);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                Reservation reservation = new Reservation(rs.getInt("id"), rs.getTimestamp("created_date").toLocalDateTime(), rs.getInt("book_id"), rs.getString("user_id"));
+                return reservation;
+            }
+            return null;
         }
     }
 
