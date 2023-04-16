@@ -23,6 +23,7 @@ public class LibraryCard {
     private String phoneNumber;
     private String subject;
     private int faculty_id;
+    
     {
         setId(UUID.randomUUID().toString());
     }
@@ -30,10 +31,6 @@ public class LibraryCard {
 //    public LibraryCard(String id, String name, int gender, Date birthDate = null) {
         
 //    }
-    /**
-     * @return the id
-     */
-    
     public LibraryCard(String id, String name, int gender, LocalDate birthDate, String email, LocalDate expireDate, String address, String phoneNumber, String subject, int faculty_id) {
         this.id = id;
         this.name = name;
@@ -46,10 +43,12 @@ public class LibraryCard {
         this.subject = subject;
         this.faculty_id = faculty_id;
     }
-    public LibraryCard(String name, int gender, LocalDate birthDate, int faculty_id) {
+    public LibraryCard(String name, int gender, LocalDate birthDate, LocalDate expireDate , String subject, int faculty_id) {
         this.name = name;
         this.gender = gender;
         this.birthDate = birthDate;
+        this.expireDate = expireDate;
+        this.subject = subject;
         this.faculty_id = faculty_id;
     }
     public LibraryCard() {

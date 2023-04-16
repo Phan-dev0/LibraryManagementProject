@@ -35,46 +35,53 @@ public class ReservationService {
             }
 
             book.setState("RESERVED");
-            if (!bookService.updateBook(book))
+            if (!bookService.updateBook(book)) {
                 return false;
+            }
             Reservation reservation = new Reservation(LocalDateTime.now(), book.getId(), user.getId());
             String sql = "insert into reservation(created_date, book_id, user_id) values(?, ?, ?)";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setTimestamp(1, Timestamp.valueOf(reservation.getCreatedDate()));
             stm.setInt(2, reservation.getBookId());
             stm.setString(3, reservation.getUserId());
-            
+
             int result = stm.executeUpdate();
             return result > 0;
         }
-        
-        
 
     }
-    
+
     public boolean deleteReservation(int id) throws SQLException {
-        try (Connection conn = JdbcUtils.getConn())  {
+        try (Connection conn = JdbcUtils.getConn()) {
             String sql = "delete from reservation where id = ?";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setInt(1, id);
-            
+
             return stm.executeUpdate() > 0;
         }
     }
-    
+
     public boolean deleteReservation(int bookId, String userId) throws SQLException {
-        try (Connection conn = JdbcUtils.getConn())  {
+        BookService bookService = new BookService();
+
+        try (Connection conn = JdbcUtils.getConn()) {
             String sql = "delete from reservation where book_id = ? and user_id like ?";
             PreparedStatement stm = conn.prepareCall(sql);
+            Book book = bookService.getBookById(bookId);
+            book.setState("FREE");
+            if (!bookService.updateBook(book)) {
+                return false;
+            }
             stm.setInt(1, bookId);
             stm.setString(2, userId);
+
             return stm.executeUpdate() > 0;
         }
     }
-    
+
     public List<Reservation> getReservations() throws SQLException {
         List<Reservation> reservations = new ArrayList<>();
-        try(Connection conn = JdbcUtils.getConn()) {
+        try (Connection conn = JdbcUtils.getConn()) {
             String sql = "SELECT * FROM reservation";
             PreparedStatement stm = conn.prepareCall(sql);
             ResultSet rs = stm.executeQuery();
