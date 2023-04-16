@@ -72,6 +72,8 @@ public class BookDetailController implements Initializable {
     private Button btnLend;
     @FXML
     private Button btnReserve;
+    @FXML
+    private Button btnCancel;
     
     
     private int Id;
@@ -90,11 +92,11 @@ public class BookDetailController implements Initializable {
 
         if(session.getUserRole().equals(studentSubject)){
             btnLend.setVisible(false);
-            } 
+        } 
         
-        btnReserve.setOnAction(evt -> {
+        this.btnReserve.setOnAction(evt -> {
             try {
-                User user = userService.getUserById("Blfyr8UfJU6nAtgMxB89");
+                User user = userService.getUserById(session.getUser().getId());
                 int bookId = bookService.getBookIdByBookTitle(lbTitle.getText());
                 Book b = bookService.getBookById(bookId);
                 reservationService.createReservation(user.getId(), bookId);
@@ -109,7 +111,7 @@ public class BookDetailController implements Initializable {
                 Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        btnLend.setOnAction(evt -> {
+        this.btnLend.setOnAction(evt -> {
             try {
 
                 lendBook(evt);
@@ -118,6 +120,19 @@ public class BookDetailController implements Initializable {
                 Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+        });
+        this.btnCancel.setOnAction(evt -> {
+            try {
+                reservationService.deleteReservation(this.Id, session.getUser().getId());
+                Stage detailStage = (Stage) ((Node)evt.getSource()).getScene().getWindow();
+                detailStage.close();
+                App primaryPage = new App();
+                if (primaryPage.getStage().isShowing()) {
+                    primaryPage.changeScene("primary");
+                }
+            } catch (SQLException | IOException ex) {
+                Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
 
     }
@@ -187,5 +202,10 @@ public class BookDetailController implements Initializable {
         BookService bookService = new BookService();
         this.btnReserve.setVisible(!(bookService.getBookById(this.Id).getState().equals("RESERVED")));
 
+    }
+    
+    public void showCancel() throws SQLException {
+        BookService bookService = new BookService();
+        this.btnCancel.setVisible(bookService.getBookById(this.Id).getState().equals("RESERVED"));
     }
 }
