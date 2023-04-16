@@ -14,6 +14,7 @@ import com.gr2.services.ReservationService;
 import java.io.IOException;
 import com.gr2.services.UserService;
 import com.gr2.utils.DateUtils;
+import com.gr2.utils.MessageBox;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -33,7 +34,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -74,42 +77,29 @@ public class BookDetailController implements Initializable {
     private Button btnReserve;
     @FXML
     private Button btnCancel;
-    
-    
+
     private int Id;
 
     UserSession session = UserSession.getSession();
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        UserService userService = new UserService();
-        BookService bookService = new BookService();
-        ReservationService reservationService = new ReservationService();
-        BorrowDetailService borrowDetailService = new BorrowDetailService();
         
+
         String subject = session.getUserRole();
         String studentSubject = "STUDENT";
 
-        if(session.getUserRole().equals(studentSubject)){
+        if (session.getUserRole().equals(studentSubject)) {
             btnLend.setVisible(false);
-        } 
-        
-        this.btnReserve.setOnAction(evt -> {
-            try {
-                User user = userService.getUserById(session.getUser().getId());
-                int bookId = bookService.getBookIdByBookTitle(lbTitle.getText());
-                Book b = bookService.getBookById(bookId);
-                reservationService.createReservation(user.getId(), bookId);
-                Stage detailStage = (Stage) ((Node) evt.getSource()).getScene().getWindow();
-                detailStage.close();
-                App primaryPage = new App();
-                if (primaryPage.getStage().isShowing()) {
-                    primaryPage.changeScene("primary");
-                }
+        }
 
-            } catch (SQLException | IOException ex) {
-                Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        this.btnReserve.setOnAction(evt -> {
+            Alert a = MessageBox.getMessageBox("Confirm Save", "Are you sure ?", Alert.AlertType.CONFIRMATION);
+            a.showAndWait().ifPresent(res -> {
+                if (res == ButtonType.OK) {
+                    reserveBook(evt);
+                }
+            });
         });
         this.btnLend.setOnAction(evt -> {
             try {
@@ -117,22 +107,19 @@ public class BookDetailController implements Initializable {
                 lendBook(evt);
 
             } catch (SQLException | IOException ex) {
+                MessageBox.getMessageBox("ERROR", ex.getMessage(), Alert.AlertType.ERROR).show();
                 Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         });
         this.btnCancel.setOnAction(evt -> {
-            try {
-                reservationService.deleteReservation(this.Id, session.getUser().getId());
-                Stage detailStage = (Stage) ((Node)evt.getSource()).getScene().getWindow();
-                detailStage.close();
-                App primaryPage = new App();
-                if (primaryPage.getStage().isShowing()) {
-                    primaryPage.changeScene("primary");
+            Alert a = MessageBox.getMessageBox("Confirm Save", "Are you sure ?", Alert.AlertType.CONFIRMATION);
+            a.showAndWait().ifPresent(res -> {
+                if (res == ButtonType.OK) {
+                    cancelReserve(evt);
                 }
-            } catch (SQLException | IOException ex) {
-                Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            });
+
         });
 
     }
@@ -150,25 +137,21 @@ public class BookDetailController implements Initializable {
     }
 
     public void lendBook(ActionEvent e) throws SQLException, IOException {
-          
-          Stage mainStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-          FXMLLoader loader = new FXMLLoader();
-          loader.setLocation(getClass().getResource("selectUserBorrowBook.fxml"));
-          Parent bookViewParent = loader.load();
-          Stage dialog = new Stage();
-          Scene scene = new Scene(bookViewParent);
-          selectUserBorrowController controller = loader.getController();
-          controller.setStage(mainStage);
-          controller.setTitle(lbTitle.getText());
-          System.out.println(lbTitle.getText());
-          
-          
 
-          dialog.setTitle("Select the borrow one ");
-          dialog.initModality(Modality.APPLICATION_MODAL);
-          dialog.initOwner(mainStage);
-          dialog.setScene(scene);
-          dialog.show();
+        Stage mainStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("selectUserBorrowBook.fxml"));
+        Parent bookViewParent = loader.load();
+        Stage dialog = new Stage();
+        Scene scene = new Scene(bookViewParent);
+        selectUserBorrowController controller = loader.getController();
+        controller.setStage(mainStage);
+        controller.setTitle(lbTitle.getText());
+        dialog.setTitle("Select the borrow one ");
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(mainStage);
+        dialog.setScene(scene);
+        dialog.show();
 //        DateUtils dateUtils = new DateUtils();
 //        UserSession dataUserId = UserSession.getSession();
 //        BookService getBookId = new BookService();
@@ -198,12 +181,49 @@ public class BookDetailController implements Initializable {
 
     }
 
+    public void reserveBook(ActionEvent e) {
+        try {
+            UserService userService = new UserService();
+            BookService bookService = new BookService();
+            ReservationService reservationService = new ReservationService();
+            User user = userService.getUserById(session.getUser().getId());
+            int bookId = bookService.getBookIdByBookTitle(lbTitle.getText());
+            reservationService.createReservation(user.getId(), bookId);
+            Stage detailStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+            detailStage.close();
+            App primaryPage = new App();
+            if (primaryPage.getStage().isShowing()) {
+                primaryPage.changeScene("primary");
+            }
+
+        } catch (SQLException | IOException ex) {
+            MessageBox.getMessageBox("ERROR", ex.getMessage(), Alert.AlertType.ERROR).show();
+            Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void cancelReserve(ActionEvent e) {
+        ReservationService reservationService = new ReservationService();
+        try {
+            reservationService.deleteReservation(this.Id, session.getUser().getId());
+            Stage detailStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+            detailStage.close();
+            App primaryPage = new App();
+            if (primaryPage.getStage().isShowing()) {
+                primaryPage.changeScene("primary");
+            }
+        } catch (SQLException | IOException ex) {
+            MessageBox.getMessageBox("ERROR", ex.getMessage(), Alert.AlertType.ERROR).show();
+            Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public void hideReserve() throws SQLException {
         BookService bookService = new BookService();
         this.btnReserve.setVisible(!(bookService.getBookById(this.Id).getState().equals("RESERVED")));
 
     }
-    
+
     public void showCancel() throws SQLException {
         BookService bookService = new BookService();
         this.btnCancel.setVisible(bookService.getBookById(this.Id).getState().equals("RESERVED"));

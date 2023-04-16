@@ -9,6 +9,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+
 import com.gr2.services.BookService;
 import com.gr2.services.JdbcUtils;
 import java.sql.Connection;
@@ -80,18 +84,37 @@ public class BookTester {
         }
     }
     
-//    @Test
-//    public void testEqualBookList() {
-//        try {
-//            List<Book> books = bookService.getBooks("", null);
-//            List<Book> booksTest = bookService.getBooks("Dung", "author");
-//            System.out.println(books);
-//            System.out.println(booksTest);
-//            Assertions.assertEquals(booksTest, books);
-//        } catch (SQLException ex) {
-//            Logger.getLogger(BookTester.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+    @Test
+    public void testEqualBookList() {
+        try {
+            List<Book> books = bookService.getBooks("", null);
+            List<Book> booksTest = bookService.getBooks("Dung", "author");
+            Assertions.assertEquals(books, booksTest);
+            Assertions.assertEquals(booksTest, books);
+        } catch (SQLException ex) {
+            Logger.getLogger(BookTester.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
+    @Test
+    public void testCorrectBookTitle() throws SQLException {
+        int book = bookService.getBookIdByBookTitle("Quyền lập pháp");
+        Assertions.assertEquals(1, book);
+    }
   
+    @Test
+    public void testNonexistentBookTitle() throws SQLException {
+        int book = bookService.getBookIdByBookTitle("Hello World");
+        Assertions.assertEquals(0, book);
+    }
+    
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3})
+    public void testGetBookById(int n) throws SQLException {
+        Book book = bookService.getBookById(n);
+        Assertions.assertEquals(n, book.getId());
+    }
+    
+    
+    
 }

@@ -4,6 +4,7 @@ import com.gr2.pojos.Book;
 import com.gr2.pojos.Category;
 import com.gr2.pojos.Reservation;
 import com.gr2.services.BookService;
+import com.gr2.utils.MessageBox;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -19,6 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -72,10 +74,13 @@ public class PrimaryController implements Initializable {
             try {
 
                 String criteria = ((RadioButton) criteriaToggle.getSelectedToggle()).getText();
-                System.out.println("Criteria is: " + criteria);
                 this.loadBooks(this.txtSearch.getText(), criteria);
+                if (this.tbBooks.getItems().isEmpty()) {
+                    MessageBox.getMessageBox("INFO", "There is no result", Alert.AlertType.INFORMATION).show();
+                }
 
             } catch (SQLException ex) {
+                MessageBox.getMessageBox("ERROR", ex.getMessage(), Alert.AlertType.WARNING).show();
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
