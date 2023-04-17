@@ -43,13 +43,20 @@ public class LibraryCardService {
         return yourName; 
     }
     
-     public List<LibraryCard> getLibraryCards() throws SQLException{
+     public List<LibraryCard> getLibraryCards(String kw) throws SQLException{
          List<LibraryCard> cards = new ArrayList<>();
          
          try(Connection conn = JdbcUtils.getConn()) {
             String sql = "SELECT * FROM library_card";
-            Statement stm = conn.createStatement();
-            ResultSet rs = stm.executeQuery(sql);
+            if (kw != null && !kw.isEmpty()) {
+                    sql += " where name like concat ('%', ?, '%')";
+            }
+            PreparedStatement stm = conn.prepareCall(sql);
+            if (kw != null && !kw.isEmpty()) {
+                   stm.setString(1, kw);
+            }
+            
+            ResultSet rs = stm.executeQuery();
             while(rs.next()){
                 LibraryCard libCard = new LibraryCard(rs.getString("id"), rs.getString("name"),
                         rs.getInt("gender"), rs.getDate("birth_date").toLocalDate(), 
