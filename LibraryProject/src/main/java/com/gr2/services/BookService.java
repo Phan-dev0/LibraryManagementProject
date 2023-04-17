@@ -36,15 +36,23 @@ public class BookService {
         return bookId;
     }
 
-    public List<BorrowDetail> getBorrowBook() throws SQLException {
+    public List<BorrowDetail> getBorrowBook(String kw) throws SQLException {
         List<BorrowDetail> borrowBooks = new ArrayList<>();
         try (Connection conn = JdbcUtils.getConn()) {
             String sql = "select * from borrow_detail";
+            if (kw != null && !kw.isEmpty()) {
+                    sql += " where user_id like concat ('%', ?, '%')";
+            }
             
-            Statement stm = conn.createStatement();
+            PreparedStatement stm = conn.prepareCall(sql);
+            if (kw != null && !kw.isEmpty()) {
+                   stm.setString(1, kw);
+            }
             
-            ResultSet rs = stm.executeQuery(sql);
+            ResultSet rs = stm.executeQuery();
             
+            
+                    
             while(rs.next()){
                 int bookId = rs.getInt("book_id");
                 

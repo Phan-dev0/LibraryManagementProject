@@ -26,6 +26,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
@@ -161,6 +162,14 @@ public class PrimaryController implements Initializable {
 
             return cell;
         });
+//        TableColumn colCheck = new TableColumn();
+//        colCheck.setCellFactory(e ->{
+//            TableCell<Book, CheckBox> cell = new TableCell<>();
+//            
+//            
+//            return null;
+//            
+//        });
         this.tbBooks.getColumns().addAll(colTitle, colAuthors, colYear, colCate, colDetail);
 
     }

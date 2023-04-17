@@ -12,6 +12,7 @@ import com.gr2.services.BorrowDetailService;
 import com.gr2.services.LibraryCardService;
 import com.gr2.services.UserService;
 import com.gr2.utils.DateUtils;
+import com.gr2.utils.MessageBox;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -27,11 +28,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -45,10 +49,15 @@ public class selectUserBorrowController implements Initializable {
     private TableView tbLibraryCard;
     @FXML
     private Label lbNotify;
+    @FXML
+    private Button btnFind;
+    @FXML
+    private TextField txtSearch;
     
     private String title;
 
     private Stage detailStage;
+    
     
     private int bookId;
     
@@ -66,10 +75,21 @@ public class selectUserBorrowController implements Initializable {
         
         try{
             this.loadTable();
-            this.loadLibraryCard();
+            this.loadLibraryCard(null);
         }catch (SQLException ex) {
             Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.btnFind.setOnAction(evt -> {
+            try {
+                this.loadLibraryCard(this.txtSearch.getText());
+                if (this.tbLibraryCard.getItems().isEmpty()) {
+                    MessageBox.getMessageBox("INFO", "There is no result", Alert.AlertType.INFORMATION).show();
+                }
+            } catch (SQLException ex) {
+                MessageBox.getMessageBox("ERROR", ex.getMessage(), Alert.AlertType.WARNING).show();
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
     
     private void loadTable(){
@@ -155,9 +175,9 @@ public class selectUserBorrowController implements Initializable {
         this.tbLibraryCard.getColumns().addAll(colId, colName, colBirthDay, colEmail, colExpireDate, colChoose);
     }
 
-    private void loadLibraryCard() throws SQLException{
+    private void loadLibraryCard(String kw) throws SQLException{
         LibraryCardService service = new LibraryCardService();
-        List<LibraryCard> card = service.getLibraryCards();
+        List<LibraryCard> card = service.getLibraryCards(kw);
         this.tbLibraryCard.getItems().clear();
         this.tbLibraryCard.setItems(FXCollections.observableList(card));
     }
