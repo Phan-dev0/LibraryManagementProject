@@ -28,6 +28,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -42,11 +43,14 @@ import javafx.stage.Stage;
 public class selectUserBorrowController implements Initializable {
     @FXML
     private TableView tbLibraryCard;
-    
+    @FXML
+    private Label lbNotify;
     
     private String title;
 
     private Stage detailStage;
+    
+    
     
     UserService userService = new UserService();
     
@@ -100,16 +104,18 @@ public class selectUserBorrowController implements Initializable {
                                BookService bookService = new BookService();
                                int bookId = 0;
                                String userId = "";
-                               try {
-                                   bookId = bookService.getBookIdByBookTitle(title);
-                                } catch (SQLException ex) {
-                                   Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
-                                }
                                
                                LibraryCard card = (LibraryCard) tbLibraryCard.getItems().get(this.getTableRow().getIndex());
                                String cardId = card.getId();
                                 try {
+                                   bookId = bookService.getBookIdByBookTitle(title);
                                    userId = userService.getUserIdByCardId(cardId);
+                                   
+//                                   if(bookService.isLendMoreFiveBook(userId)){
+//                                       lbNotify.setText("Borrowed more than 5 books");
+//                                       return;
+//                                   }
+                                   
                                 } catch (SQLException ex) {
                                     Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
                                 }
@@ -126,6 +132,7 @@ public class selectUserBorrowController implements Initializable {
                                 } catch (SQLException ex) {
                                     Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
                                 }
+                                
                                 Stage selectedStage = (Stage) ((Node) evt.getSource()).getScene().getWindow();
                                 detailStage.close();
                                 selectedStage.close();

@@ -4,6 +4,7 @@
  */
 package com.gr2.pojos;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -17,7 +18,7 @@ public class Book {
     private String description;
     private int publishedYear;
     private String publishedPlace;
-    private Date importDate;
+    private LocalDate importDate;
     private String location;
     private String state;
     private int categoryId;
@@ -27,7 +28,7 @@ public class Book {
         
     }
     
-    public Book(int id, String title, String authors, String description, int publishedYear, String publishedPlace, Date importDate, String location, int cateogoryId, String state) {
+    public Book(int id, String title, String authors, String description, int publishedYear, String publishedPlace, LocalDate importDate, String location, int cateogoryId, String state) {
         this.id = id;
         this.title = title;
         this.authors = authors;
@@ -39,7 +40,17 @@ public class Book {
         this.categoryId = cateogoryId;
         this.state = state;
     }
-
+     public Book( String title, String authors, String description, int publishedYear, String publishedPlace, LocalDate importDate, String location, int cateogoryId, String state) {
+        this.title = title;
+        this.authors = authors;
+        this.description = description;
+        this.publishedYear = publishedYear;
+        this.publishedPlace = publishedPlace;
+        this.importDate = importDate;
+        this.location = location;
+        this.categoryId = cateogoryId;
+        this.state = state;
+    }
     /**
      * @return the id
      */
@@ -113,14 +124,14 @@ public class Book {
     /**
      * @return the importDate
      */
-    public Date getImportDate() {
+    public LocalDate getImportDate() {
         return importDate;
     }
 
     /**
      * @param importDate the importDate to set
      */
-    public void setImportDate(Date importDate) {
+    public void setImportDate(LocalDate importDate) {
         this.importDate = importDate;
     }
 
