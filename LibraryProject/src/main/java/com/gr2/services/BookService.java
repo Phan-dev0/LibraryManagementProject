@@ -121,7 +121,7 @@ public class BookService {
                 }
                 ResultSet rs = stm.executeQuery();
                 while (rs.next()) {
-                    Book b = new Book(rs.getInt("id"), rs.getString("title"), rs.getString("authors"), rs.getString("description"), rs.getInt("publish_year"), rs.getString("publish_place"), rs.getDate("import_date"), rs.getString("location"), rs.getInt("category_id"), rs.getString("state"));
+                    Book b = new Book(rs.getInt("id"), rs.getString("title"), rs.getString("authors"), rs.getString("description"), rs.getInt("publish_year"), rs.getString("publish_place"), rs.getDate("import_date").toLocalDate(), rs.getString("location"), rs.getInt("category_id"), rs.getString("state"));
                     books.add(b);
 
                 }
@@ -144,7 +144,7 @@ public class BookService {
                 book.setId(rs.getInt("id"));
                 book.setAuthors(rs.getString("authors"));
                 book.setDescription(rs.getString("description"));
-                book.setImportDate(rs.getDate("import_date"));
+                book.setImportDate(rs.getDate("import_date").toLocalDate());
                 book.setLocation(rs.getString("location"));
                 book.setPublishedPlace(rs.getString("publish_place"));
                 book.setPublishedYear(rs.getInt("publish_year"));
@@ -156,6 +156,37 @@ public class BookService {
         }
     }
 
+    public boolean addBook(Book book) throws SQLException{
+        try(Connection conn = JdbcUtils.getConn()){
+            String sql;
+            sql = "insert into book (title, authors, description, publish_year, publish_place, import_date, location, category_id, state) "
+                    + "values (?,?,?,?,?,?,?,?,?)";
+            
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, book.getTitle());
+            stm.setString(2, book.getAuthors());
+            stm.setString(3, book.getDescription());
+            stm.setInt(4, book.getPublishedYear());
+            stm.setString(5, book.getPublishedPlace());
+            stm.setDate(6, Date.valueOf(book.getImportDate()) );
+            stm.setString(7, book.getLocation());
+            stm.setInt(8, book.getCategoryId());
+            stm.setString(9, book.getState());
+            stm.executeUpdate();
+            
+            return false;
+        }
+    }
+    public void deleteBook(int id) throws SQLException{
+        try(Connection conn = JdbcUtils.getConn()){
+            String sql = "delete from book where id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            
+            stm.setInt(1, id);
+            stm.executeUpdate();
+            
+        }
+    }
     public boolean updateBook(Book book) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
             String sql = "update book "
@@ -169,15 +200,49 @@ public class BookService {
             stm.setString(4, book.getDescription());
             stm.setInt(5, book.getPublishedYear());
             stm.setString(6, book.getPublishedPlace());
-            stm.setDate(7, (Date) book.getImportDate());
+            stm.setDate(7, Date.valueOf(book.getImportDate()));
             stm.setString(8, book.getLocation());
             stm.setInt(9, book.getCategoryId());
             stm.setString(10, book.getState());
             stm.setInt(11, book.getId());
-
+            
+            stm.executeUpdate();
+            
             int result = stm.executeUpdate();
             return result > 0;
 
         }
+    }
+    
+    public boolean isLendMoreFiveBook(String userID) throws SQLException{
+        int lendBooksQuantity = 0;
+        try(Connection conn = JdbcUtils.getConn()){
+            String sql = "select * from borrow_detail where user_id=?";
+            
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, userID);
+            
+            ResultSet rs = stm.executeQuery();
+            while(rs.next()){
+                int bookId = rs.getInt("book_id");
+                sql = "select state from book where id=?";
+                
+                PreparedStatement stm1 = conn.prepareCall(sql);
+                stm1.setInt(1, bookId);
+                
+                ResultSet rs1 = stm1.executeQuery();
+                if(rs1.next()){
+                    String state = rs1.getString("state");
+                    if(state == "BORROWED"){
+                        lendBooksQuantity++;
+                    }
+                }
+                
+            }
+            
+        }
+        if(lendBooksQuantity >= 5)
+            return true;
+        return false;
     }
 }

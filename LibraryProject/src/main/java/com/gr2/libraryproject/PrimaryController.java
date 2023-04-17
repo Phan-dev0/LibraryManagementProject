@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -54,6 +55,13 @@ public class PrimaryController implements Initializable {
     private RadioButton rdCategory;
     @FXML
     private Label lbname;
+    @FXML 
+    private Button btnAddBook;
+    @FXML
+    private Button btnUpdateBook;
+    @FXML
+    private Button btnDeleteBook;
+    
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -163,5 +171,56 @@ public class PrimaryController implements Initializable {
         this.tbBooks.getItems().clear();
         this.tbBooks.setItems(FXCollections.observableList(books));
     }
+    
+    @FXML 
+    public void addBook(ActionEvent e) throws IOException{
+        Stage mainStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+          FXMLLoader loader = new FXMLLoader();
+          loader.setLocation(getClass().getResource("addBtnPage.fxml"));
+          Parent addBookViewParent = loader.load();
+          Stage dialog = new Stage();
+          Scene scene = new Scene(addBookViewParent);
+          
 
+          dialog.setTitle("Select the borrow one ");
+          dialog.initModality(Modality.APPLICATION_MODAL);
+          dialog.initOwner(mainStage);
+          dialog.setScene(scene);
+          dialog.show();
+    }
+    
+    @FXML
+    public void deleteBook(ActionEvent e) throws SQLException{
+        BookService bookService = new BookService();
+        Book deleleBook = tbBooks.getSelectionModel().getSelectedItem();
+        int bookId = deleleBook.getId();
+        bookService.deleteBook(bookId);
+        
+        tbBooks.getItems().removeAll(tbBooks.getSelectionModel().getSelectedItem());
+        
+    }
+    
+    @FXML public void updateBook(ActionEvent e) throws IOException, SQLException{
+        if(tbBooks.getSelectionModel().getSelectedItem() == null){
+          return;
+        }
+        
+        BookService bookService = new BookService();
+        Book updateBook = tbBooks.getSelectionModel().getSelectedItem();
+        
+        Stage mainStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+          FXMLLoader loader = new FXMLLoader();
+          loader.setLocation(getClass().getResource("updateBtnPage.fxml"));
+          Parent addBookViewParent = loader.load();
+          Stage dialog = new Stage();
+          Scene scene = new Scene(addBookViewParent);
+          addBookController controller = loader.getController();
+          controller.setBook(updateBook);
+
+          dialog.setTitle("Select the borrow one ");
+          dialog.initModality(Modality.APPLICATION_MODAL);
+          dialog.initOwner(mainStage);
+          dialog.setScene(scene);
+          dialog.show();
+    }
 }

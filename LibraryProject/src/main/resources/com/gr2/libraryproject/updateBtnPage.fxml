@@ -13,7 +13,7 @@
    <top>
       <Pane prefHeight="56.0" prefWidth="359.0" style="-fx-background-color: rgb(52,153,255);" BorderPane.alignment="CENTER">
          <children>
-            <Text layoutX="161.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: white;" text="Add Book">
+            <Text layoutX="146.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: white;" text="Update Book">
                <font>
                   <Font size="22.0" />
                </font>
@@ -79,7 +79,7 @@
                </children>
             </Pane>
             <ComboBox fx:id="cbCategory" layoutX="211.0" layoutY="323.0" prefHeight="32.0" prefWidth="160.0" promptText="Category" />
-            <Button fx:id="btnComfirm" layoutX="170.0" layoutY="375.0" mnemonicParsing="false" onAction="#comfirmSubmit" prefHeight="33.0" prefWidth="72.0" style="-fx-background-color: rgb(52,153,255); -fx-text-fill: white;" text="Comfirm" />
+            <Button fx:id="btnComfirm" layoutX="170.0" layoutY="375.0" mnemonicParsing="false" onAction="#comfirmUpdate" prefHeight="33.0" prefWidth="72.0" style="-fx-background-color: rgb(52,153,255); -fx-text-fill: white;" text="Comfirm" />
             <Label fx:id="lbTitleIcon" layoutX="21.0" layoutY="45.0" prefHeight="17.0" prefWidth="0.0" textFill="RED">
                <font>
                   <Font size="23.0" />
