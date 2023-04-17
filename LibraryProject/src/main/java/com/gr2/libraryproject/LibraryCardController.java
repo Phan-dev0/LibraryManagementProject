@@ -9,13 +9,18 @@ import com.gr2.pojos.Faculty;
 import com.gr2.pojos.LibraryCard;
 import com.gr2.services.FacultyService;
 import com.gr2.services.LibraryCardService;
+import com.gr2.utils.MessageBox;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,11 +28,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -61,6 +70,8 @@ public class LibraryCardController implements Initializable {
     private TextField txtPhone;
     @FXML
     private Button saveButton;
+    @FXML
+    private AnchorPane anchorPane;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -87,13 +98,36 @@ public class LibraryCardController implements Initializable {
                 txtAddress.setText(libCard.getAddress());
                 txtPhone.setText(libCard.getPhoneNumber());
                 saveButton.setOnAction(evt -> {
-                    libCard.setAddress(txtAddress.getText());
-                    libCard.setEmail(txtEmail.getText());
-                    libCard.setPhoneNumber(txtPhone.getText());
-                    try {
-                        libCardService.updateLibraryCard(libCard);
+                    clearErrorMsg();
+                    String address = txtAddress.getText();
+                    String email = txtEmail.getText();
+                    String phoneNumber = txtPhone.getText();
+
+                    Pattern emailPattern = Pattern.compile("^[\\w-\\.]+@([\\w-\\.])+[\\w-]{2,4}$");
+                    if (email == null || !emailPattern.matcher(email).matches()) {
+                        createErrorMsg(txtEmail, "Your new email is not valid!");
+                    } else {
+                        libCard.setEmail(txtEmail.getText());
                     }
-                    catch (SQLException ex) {
+                    Pattern phoneNumberPattern = Pattern.compile("^\\d{10,11}$");
+                    if (phoneNumber == null || !phoneNumberPattern.matcher(phoneNumber).matches()) {
+                        createErrorMsg(txtPhone, "Your new phone number is not valid!");
+                    } else {
+                        libCard.setPhoneNumber(txtPhone.getText());
+                    }
+                    Pattern addressPattern = Pattern.compile("^([\\w\\\\])*,\\s([\\w,\\s])*,\\s([\\w\\.\\s])+$");
+                    if (address == null || !addressPattern.matcher(address).matches()) {
+                        createErrorMsg(txtAddress, "Your new address is not valid!");
+                    } else {
+                        libCard.setAddress(txtAddress.getText());
+                    }
+
+                    try {
+                        if (libCardService.updateLibraryCard(libCard)) {
+                            MessageBox.getMessageBox("Info", "Update card successfully!", Alert.AlertType.INFORMATION).show();
+                        }
+                        
+                    } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
                 });
@@ -103,5 +137,22 @@ public class LibraryCardController implements Initializable {
             Logger.getLogger(LibraryCardController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    public void createErrorMsg(TextField txt, String msg) {
+        HBox hbox = (HBox) txt.getParent();
+        Label lbError = new Label();
+        lbError.setStyle("-fx-text-fill: red");
+        lbError.setText(msg);
+        hbox.getChildren().add(lbError);
+    }
+    
+    public void clearErrorMsg() {
+        List<TextField> textfields = new ArrayList<>(List.of(this.txtEmail, this.txtPhone, this.txtAddress));
+        textfields.forEach(txt -> {
+            List<Node> nodes = ((HBox)txt.getParent()).getChildren();
+            if (!(nodes.get(nodes.size() - 1) instanceof Label)) return; 
+            nodes.remove(nodes.get(nodes.size() - 1));
+        });
     }
 }

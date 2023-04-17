@@ -154,7 +154,7 @@ public class ReserveBookController implements Initializable {
         Instant reservationTime = reservation.getCreatedDate().toInstant(ZoneOffset.of("+7"));
         Duration timeElapsed = Duration.between(currentTime, reservationTime);
         double hours = (double)timeElapsed.toSeconds()/ 3600;
-        return Math.abs(hours) >= 24;
+        return Math.abs(hours) >= 48;
     }
 
 }
