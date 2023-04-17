@@ -67,7 +67,7 @@
                         <FontAwesomeIcon fill="WHITE" glyphName="HISTORY" />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="nav" text="Stats">
+                  <Button fx:id="btnStats" alignment="BASELINE_LEFT" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="nav" text="Stats">
                      <font>
                         <Font size="18.0" />
                      </font>
