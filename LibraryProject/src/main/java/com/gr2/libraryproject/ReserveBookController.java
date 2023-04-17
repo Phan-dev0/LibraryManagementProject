@@ -116,6 +116,8 @@ public class ReserveBookController implements Initializable {
                                 controller.setBook(bookService.getBookById(currentBookId));
                                 controller.hideReserve();
                                 controller.showCancel();
+                                String userID = tbReserve.getItems().get(this.getTableRow().getIndex()).getUserId();
+                                controller.setReserveUserID(userID);
                                 dialog.setTitle("Book information");
                                 dialog.initModality(Modality.APPLICATION_MODAL);
 

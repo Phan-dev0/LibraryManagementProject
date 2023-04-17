@@ -79,18 +79,19 @@ public class BookDetailController implements Initializable {
     private Button btnCancel;
 
     private int Id;
+    private String reserveUserID;
 
     UserSession session = UserSession.getSession();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
 
         String subject = session.getUserRole();
         String studentSubject = "STUDENT";
 
         if (session.getUserRole().equals(studentSubject)) {
             btnLend.setVisible(false);
+            btnReserve.setVisible(true);
         }
 
         this.btnReserve.setOnAction(evt -> {
@@ -103,8 +104,24 @@ public class BookDetailController implements Initializable {
         });
         this.btnLend.setOnAction(evt -> {
             try {
-
-                lendBook(evt);
+                BorrowDetailService borrowDetailService = new BorrowDetailService();
+                if (session.getUserRole().equals("ADMIN") && this.getReserUserID() != null) {
+                    if (borrowDetailService.lendBookBaseOnBookId(this.getReserUserID(), this.Id)) {
+                        MessageBox.getMessageBox("INFO", "Lend Book Successfully!", Alert.AlertType.INFORMATION).show();
+                        App primaryPage = new App();
+                        if (primaryPage.getStage().isShowing()) {
+                            try {
+                                primaryPage.changeScene("primary");
+                            } catch (IOException ex) {
+                                Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    } else {
+                        MessageBox.getMessageBox("ERROR", "Lend Book Failed!", Alert.AlertType.ERROR);
+                    }
+                } else {
+                    lendBook(evt);
+                }
 
             } catch (SQLException | IOException ex) {
                 MessageBox.getMessageBox("ERROR", ex.getMessage(), Alert.AlertType.ERROR).show();
@@ -143,15 +160,15 @@ public class BookDetailController implements Initializable {
         loader.setLocation(getClass().getResource("selectUserBorrowBook.fxml"));
         Parent bookViewParent = loader.load();
         Stage dialog = new Stage();
-        
+
         Scene scene = new Scene(bookViewParent);
         selectUserBorrowController controller = loader.getController();
         controller.setStage(mainStage);
-        
+
         controller.setId(Id);
-        
+
         dialog.setTitle("Select the borrow one ");
-        
+
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(mainStage);
         dialog.setScene(scene);
@@ -224,12 +241,22 @@ public class BookDetailController implements Initializable {
 
     public void hideReserve() throws SQLException {
         BookService bookService = new BookService();
-        this.btnReserve.setVisible(!(bookService.getBookById(this.Id).getState().equals("RESERVED")));
+        if (session.getUserRole().equals("STUDENT")) {
+            this.btnReserve.setVisible(!(bookService.getBookById(this.Id).getState().equals("RESERVED")));
+        }
 
     }
 
     public void showCancel() throws SQLException {
         BookService bookService = new BookService();
         this.btnCancel.setVisible(bookService.getBookById(this.Id).getState().equals("RESERVED"));
+    }
+
+    public void setReserveUserID(String id) {
+        this.reserveUserID = id;
+    }
+
+    public String getReserUserID() {
+        return reserveUserID;
     }
 }

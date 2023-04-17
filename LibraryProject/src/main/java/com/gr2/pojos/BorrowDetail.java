@@ -32,6 +32,7 @@ public class BorrowDetail {
        this.returnDate = returnDate;
     }
 
+
     
     /**
      * @return the id
