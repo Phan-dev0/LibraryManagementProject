@@ -4,11 +4,13 @@ import com.gr2.pojos.Book;
 import com.gr2.pojos.Category;
 import com.gr2.pojos.Reservation;
 import com.gr2.services.BookService;
+import com.gr2.services.UserService;
 import com.gr2.utils.MessageBox;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -62,10 +64,26 @@ public class PrimaryController implements Initializable {
     private Button btnUpdateBook;
     @FXML
     private Button btnDeleteBook;
+    @FXML
+    private Button btnLendAll;
     
-
+//    List<Book> books = new ArrayList<>();
+//    List<CheckBox> checkBoxs = new ArrayList<>();
+//    
+    UserSession session = UserSession.getSession();
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        String subject = session.getUserRole();
+        String studentSubject = "STUDENT";
+
+        if (session.getUserRole().equals(studentSubject)) {
+            btnAddBook.setVisible(false);
+            btnDeleteBook.setVisible(false);
+            btnUpdateBook.setVisible(false);
+            btnLendAll.setVisible(false);
+        }
+        
         ToggleGroup criteriaToggle = new ToggleGroup();
         this.rdTitle.setToggleGroup(criteriaToggle);
         this.rdAuthors.setToggleGroup(criteriaToggle);
@@ -75,7 +93,19 @@ public class PrimaryController implements Initializable {
 
             this.loadBooks(null, ((RadioButton) criteriaToggle.getSelectedToggle()).getText());
             this.loadTableColumns();
-
+//            List<TableColumn< Book, ?>> listTable = tbBooks.getColumns();
+//            
+//            TableColumn<Book, ?> checkBoxColumn = listTable.get(listTable.size() - 1);
+//            
+//           
+//            for(Book item: tbBooks.getItems()){
+//                Node nodeCell = checkBoxColumn.getCellObservableValue(item);
+//                CheckBox checkBoxCell = (CheckBox) nodeCell;
+//                if(checkBoxCell.isSelected()){
+//                    
+//                }
+//            }
+            
         } catch (SQLException ex) {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -102,7 +132,7 @@ public class PrimaryController implements Initializable {
 //        });
 
     }
-
+    
     private void loadTableColumns() {
         TableColumn colTitle = new TableColumn("Title");
         colTitle.setCellValueFactory(new PropertyValueFactory("title"));
@@ -163,13 +193,26 @@ public class PrimaryController implements Initializable {
             return cell;
         });
 //        TableColumn colCheck = new TableColumn();
-//        colCheck.setCellFactory(e ->{
-//            TableCell<Book, CheckBox> cell = new TableCell<>();
-//            
-//            
-//            return null;
-//            
+//        colCheck.setPrefWidth(50);
+//         colDetail.setCellFactory(c -> {
+//            TableCell<Book, CheckBox> cell = new TableCell<>() {
+//                @Override
+//                protected void updateItem(CheckBox item, boolean empty) {
+//                    super.updateItem(item, empty);
+//                    if (!empty) {
+//                        CheckBox checkBox  = new CheckBox();
+//                        this.setGraphic(checkBox);
+//                        
+//                    } else {
+//                        this.setGraphic(null);
+//                    }
+//                }
+//            };
+//
+//            return cell;
 //        });
+//            
+            
         this.tbBooks.getColumns().addAll(colTitle, colAuthors, colYear, colCate, colDetail);
 
     }
@@ -180,6 +223,12 @@ public class PrimaryController implements Initializable {
         this.tbBooks.getItems().clear();
         this.tbBooks.setItems(FXCollections.observableList(books));
     }
+    
+    @FXML 
+    public void lendAll(ActionEvent e){
+        
+    }
+    
     
     @FXML 
     public void addBook(ActionEvent e) throws IOException{
@@ -209,7 +258,8 @@ public class PrimaryController implements Initializable {
         
     }
     
-    @FXML public void updateBook(ActionEvent e) throws IOException, SQLException{
+    @FXML 
+    public void updateBook(ActionEvent e) throws IOException, SQLException{
         if(tbBooks.getSelectionModel().getSelectedItem() == null){
           return;
         }
