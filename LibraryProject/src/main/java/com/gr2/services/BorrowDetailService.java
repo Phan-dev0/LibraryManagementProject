@@ -33,7 +33,9 @@ public class BorrowDetailService {
             stm1.setString(1, "BORROWED");
             stm1.setInt(2, bookId);
             stm1.executeUpdate();
-
+            
+            System.out.print(userId);
+            
             sql = "insert into borrow_detail(borrow_date, return_date, user_id, book_id) values(?,?,?,?)";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setDate(1, Date.valueOf(borrowBook.getBorrowDate()));

@@ -50,15 +50,15 @@ public class selectUserBorrowController implements Initializable {
 
     private Stage detailStage;
     
-    
+    private int bookId;
     
     UserService userService = new UserService();
     
     public void setStage(Stage stg){
         this.detailStage = stg;
     }
-    public void setTitle(String title){
-        this.title = title;
+    public void setId(int id){
+        this.bookId = id;
     }
     
    @Override
@@ -102,19 +102,17 @@ public class selectUserBorrowController implements Initializable {
                         btn.setOnAction(evt -> {
                                DateUtils dateUtils = new DateUtils();
                                BookService bookService = new BookService();
-                               int bookId = 0;
                                String userId = "";
                                
                                LibraryCard card = (LibraryCard) tbLibraryCard.getItems().get(this.getTableRow().getIndex());
                                String cardId = card.getId();
                                 try {
-                                   bookId = bookService.getBookIdByBookTitle(title);
                                    userId = userService.getUserIdByCardId(cardId);
                                    
-//                                   if(bookService.isLendMoreFiveBook(userId)){
-//                                       lbNotify.setText("Borrowed more than 5 books");
-//                                       return;
-//                                   }
+                                   if(bookService.isLendMoreFiveBook(userId)){
+                                       lbNotify.setText("Borrowed more than 5 books");
+                                       return;
+                                   }
                                    
                                 } catch (SQLException ex) {
                                     Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
