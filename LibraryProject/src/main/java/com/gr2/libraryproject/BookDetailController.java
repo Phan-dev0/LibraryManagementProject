@@ -5,25 +5,15 @@
 package com.gr2.libraryproject;
 
 import com.gr2.pojos.Book;
-import com.gr2.pojos.BorrowDetail;
-import com.gr2.pojos.Reservation;
 import com.gr2.pojos.User;
 import com.gr2.services.BookService;
 import com.gr2.services.BorrowDetailService;
 import com.gr2.services.ReservationService;
 import java.io.IOException;
 import com.gr2.services.UserService;
-import com.gr2.utils.DateUtils;
 import com.gr2.utils.MessageBox;
 import java.net.URL;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +31,6 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 /**
  * FXML Controller class
@@ -86,7 +75,6 @@ public class BookDetailController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        String subject = session.getUserRole();
         String studentSubject = "STUDENT";
 
         if (session.getUserRole().equals(studentSubject)) {
@@ -116,6 +104,8 @@ public class BookDetailController implements Initializable {
                                 Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
+                        Stage detailStage = (Stage) ((Node) evt.getSource()).getScene().getWindow();
+                        detailStage.close();
                     } else {
                         MessageBox.getMessageBox("ERROR", "Lend Book Failed!", Alert.AlertType.ERROR);
                     }
