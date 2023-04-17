@@ -17,12 +17,14 @@ public class BorrowDetail {
     private LocalDate returnDate;
     private String userId;
     private int bookId;
+    private boolean isReturn;
 
-    public BorrowDetail(int bookId, String userId, LocalDate borrowDate, LocalDate returnDate) {
+    public BorrowDetail(int bookId, String userId, LocalDate borrowDate, LocalDate returnDate, boolean isReturn) {
         this.bookId = bookId;
         this.userId = userId;
         this.borrowDate = borrowDate;
         this.returnDate = returnDate;
+        this.isReturn = isReturn;
     }
 
     public BorrowDetail( LocalDate borrowDate, LocalDate returnDate) {

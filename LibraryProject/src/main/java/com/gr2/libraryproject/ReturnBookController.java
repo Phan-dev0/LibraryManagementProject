@@ -122,7 +122,7 @@ public class ReturnBookController implements Initializable {
     private void loadBorrowBooks(String kw) throws SQLException {
 
         BookService service = new BookService();
-        List<BorrowDetail> borrowBooks = service.getBorrowBook(kw);
+        List<BorrowDetail> borrowBooks = service.getBorrowBook();
         this.tbReturnBookView.getItems().clear();
         this.tbReturnBookView.setItems(FXCollections.observableList(borrowBooks));
     }

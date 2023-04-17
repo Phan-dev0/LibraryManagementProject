@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,38 +36,38 @@ public class BookService {
         return bookId;
     }
 
-    public List<BorrowDetail> getBorrowBook(String kw) throws SQLException {
+    public List<BorrowDetail> getBorrowBook() throws SQLException {
         List<BorrowDetail> borrowBooks = new ArrayList<>();
         try (Connection conn = JdbcUtils.getConn()) {
-            int bookId = 0;
-            String sql = "select id from book where state=?";
-            PreparedStatement stm1 = conn.prepareCall(sql);
-            stm1.setString(1, "BORROWED");
-            ResultSet rs1 = stm1.executeQuery();
-            while (rs1.next()) {
-                bookId = rs1.getInt("id");
-                sql = "select * From borrow_detail where book_id=?";
-                if (kw != null && !kw.isEmpty()) {
-                    sql += " and user_id like concat ('%', ?, '%')";
+            String sql = "select * from borrow_detail";
+            
+            Statement stm = conn.createStatement();
+            
+            ResultSet rs = stm.executeQuery(sql);
+            
+            while(rs.next()){
+                int bookId = rs.getInt("book_id");
+                
+                sql = "select state from book where id=?";
+                
+                PreparedStatement stm1 = conn.prepareCall(sql);
+                stm1.setInt(1, bookId);
+                
+                ResultSet rs1 = stm1.executeQuery();
+                if(rs1.next()){
+                    if(rs1.getString("state").equals("BORROWED") && rs.getBoolean("is_return") == false){
+                        int book_id = rs.getInt("book_id");
+                        String user_id = rs.getString("user_id");
+                        LocalDate borrow_date = rs.getDate("borrow_date").toLocalDate();
+                        LocalDate return_date  = rs.getDate("return_date").toLocalDate();
+                        boolean is_return = rs.getBoolean("is_return");
+                                
+                        BorrowDetail borrowBook = new BorrowDetail(bookId, user_id, borrow_date, return_date, is_return);
+                        borrowBooks.add(borrowBook);
+                    }
                 }
-
-                PreparedStatement stm = conn.prepareCall(sql);
-                stm.setInt(1, bookId);
-                if (kw != null && !kw.isEmpty()) {
-                    stm.setString(2, kw);
-                }
-                ResultSet rs = stm.executeQuery();
-                if (rs.next()) {
-                    int book_Id = rs.getInt("book_id");
-                    String userId = rs.getString("user_id");
-                    LocalDate borrowDate = rs.getDate("borrow_date").toLocalDate();
-                    LocalDate returnDate = rs.getDate("return_date").toLocalDate();
-
-                    BorrowDetail borrowBook = new BorrowDetail(book_Id, userId, borrowDate, returnDate);
-                    borrowBooks.add(borrowBook);
-                }
+                
             }
-
         }
         return borrowBooks;
     }
@@ -75,11 +76,18 @@ public class BookService {
 
         try (Connection conn = JdbcUtils.getConn()) {
 
-            String sql = "Update book set state=? where id=?";
+            String sql = "update book set state=? where id=?";
             PreparedStatement stm1 = conn.prepareCall(sql);
             stm1.setString(1, "FREE");
             stm1.setInt(2, bookId);
             stm1.executeUpdate();
+            
+            sql = "update borrow_detail set is_return=? where book_id=?";
+            
+            PreparedStatement stm2 = conn.prepareCall(sql);
+            stm2.setString(1, "1");
+            stm2.setInt(2, bookId);
+            stm2.executeUpdate();
 
             return stm1.executeUpdate() > 0;
 
@@ -216,11 +224,13 @@ public class BookService {
     
     public boolean isLendMoreFiveBook(String userID) throws SQLException{
         int lendBooksQuantity = 0;
+        
         try(Connection conn = JdbcUtils.getConn()){
-            String sql = "select * from borrow_detail where user_id=?";
+            String sql = "select * from borrow_detail where user_id=? and is_return=?";
             
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, userID);
+            stm.setBoolean(2, false);
             
             ResultSet rs = stm.executeQuery();
             while(rs.next()){
@@ -232,8 +242,7 @@ public class BookService {
                 
                 ResultSet rs1 = stm1.executeQuery();
                 if(rs1.next()){
-                    String state = rs1.getString("state");
-                    if(state == "BORROWED"){
+                    if(rs1.getString("state").equals("BORROWED")){
                         lendBooksQuantity++;
                     }
                 }
@@ -241,6 +250,7 @@ public class BookService {
             }
             
         }
+        System.out.println(lendBooksQuantity);
         if(lendBooksQuantity >= 5)
             return true;
         return false;

@@ -143,11 +143,15 @@ public class BookDetailController implements Initializable {
         loader.setLocation(getClass().getResource("selectUserBorrowBook.fxml"));
         Parent bookViewParent = loader.load();
         Stage dialog = new Stage();
+        
         Scene scene = new Scene(bookViewParent);
         selectUserBorrowController controller = loader.getController();
         controller.setStage(mainStage);
-        controller.setTitle(lbTitle.getText());
+        
+        controller.setId(Id);
+        
         dialog.setTitle("Select the borrow one ");
+        
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(mainStage);
         dialog.setScene(scene);
