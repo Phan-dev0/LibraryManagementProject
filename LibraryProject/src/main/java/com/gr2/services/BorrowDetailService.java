@@ -6,10 +6,14 @@ package com.gr2.services;
 
 import com.gr2.pojos.Book;
 import com.gr2.pojos.BorrowDetail;
+import com.gr2.utils.DateUtils;
+import com.gr2.utils.MessageBox;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.time.LocalDate;
+import javafx.scene.control.Alert;
 
 /**
  *
@@ -17,14 +21,18 @@ import java.sql.Date;
  */
 public class BorrowDetailService {
 
-    public void lendBookBaseOnBookId(BorrowDetail borrowBook, String userId, int bookId) throws SQLException {
+    public boolean lendBookBaseOnBookId(String userId, int bookId) throws SQLException {
         ReservationService reservationService = new ReservationService();
+        
         BookService bookService = new BookService();
         try (Connection conn = JdbcUtils.getConn()) {
+            conn.setAutoCommit(false);
+            DateUtils dateUtils = new DateUtils();
+            BorrowDetail borrowBook = new BorrowDetail(LocalDate.now(), dateUtils.getReturnDate(LocalDate.now()));
             Book b = bookService.getBookById(bookId);
             if (b.getState().equals("RESERVED")) {
                 if (!reservationService.deleteReservation(bookId, userId)) {
-                    System.out.println("Remove Reservation Failed");
+                    MessageBox.getMessageBox("ERROR", "Remove Reservation Failed", Alert.AlertType.WARNING).show();
                 }
             }
             conn.setAutoCommit(false);
@@ -34,19 +42,18 @@ public class BorrowDetailService {
             stm1.setInt(2, bookId);
             stm1.executeUpdate();
             
-            System.out.print(userId);
-            
             sql = "insert into borrow_detail(borrow_date, return_date, user_id, book_id) values(?,?,?,?)";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setDate(1, Date.valueOf(borrowBook.getBorrowDate()));
             stm.setDate(2, Date.valueOf(borrowBook.getReturnDate()));
             stm.setString(3, userId);
             stm.setInt(4, bookId);
-            stm.executeUpdate();
+            boolean success = stm.executeUpdate() > 0;
             
             conn.commit();
+            return success;
 
         }
     }
-
 }
+

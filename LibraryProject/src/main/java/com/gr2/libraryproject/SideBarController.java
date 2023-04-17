@@ -59,7 +59,6 @@ public class SideBarController implements Initializable {
             btnNavReturnBook.setVisible(false);
             btnNavHistoryBook.setVisible(false);
             btnStats.setVisible(false);
-            
         }
 
         btnCard.setOnAction(evt -> {
