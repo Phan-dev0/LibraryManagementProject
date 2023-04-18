@@ -5,9 +5,11 @@
 package com.gr2.libraryproject;
 
 import com.gr2.pojos.Book;
+import com.gr2.pojos.Category;
 import com.gr2.pojos.User;
 import com.gr2.services.BookService;
 import com.gr2.services.BorrowDetailService;
+import com.gr2.services.CategoryService;
 import com.gr2.services.ReservationService;
 import java.io.IOException;
 import com.gr2.services.UserService;
@@ -131,7 +133,8 @@ public class BookDetailController implements Initializable {
 
     }
 
-    public void setBook(Book book) {
+    public void setBook(Book book) throws SQLException {
+        CategoryService cateService = new CategoryService();
         this.Id = book.getId();
         this.lbTitle.setText(book.getTitle());
         this.lbAuthors.setText(book.getAuthors());
@@ -141,6 +144,9 @@ public class BookDetailController implements Initializable {
         this.txtImport.setText(book.getImportDate().toString());
         this.txtState.setText(book.getState());
         this.txtLoc.setText(book.getLocation());
+        Category cate = cateService.getCategoryById(book.getCategoryId());
+        this.txtCate.setText(cate.getName());
+        
     }
 
     public void lendBook(ActionEvent e) throws SQLException, IOException {
@@ -239,7 +245,9 @@ public class BookDetailController implements Initializable {
 
     public void showCancel() throws SQLException {
         BookService bookService = new BookService();
+        if (session.getUserRole().equals("STUDENT")) {
         this.btnCancel.setVisible(bookService.getBookById(this.Id).getState().equals("RESERVED"));
+        }
     }
 
     public void setReserveUserID(String id) {

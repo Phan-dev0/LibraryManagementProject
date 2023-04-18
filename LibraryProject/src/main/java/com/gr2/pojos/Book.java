@@ -6,12 +6,15 @@ package com.gr2.pojos;
 
 import java.time.LocalDate;
 import java.util.Date;
-
+import javafx.beans.property.SimpleBooleanProperty;
 /**
  *
  * @author Cuong0311
  */
 public class Book {
+
+    
+    private SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
     private int id;
     private String title;
     private String authors;
@@ -183,5 +186,19 @@ public class Book {
      */
     public void setState(String state) {
         this.state = state;
+    }
+    
+    /**
+     * @return the selected
+     */
+    public boolean isSelected() {
+        return selected.get();
+    }
+
+    /**
+     * @param selected the selected to set
+     */
+    public void setSelected(boolean selected) {
+        this.selected.set(selected);
     }
 }
