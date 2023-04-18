@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public class DateUtils {
     // Return period calculated by days
-    private final int DEFAULT_RETURN_PERIOD = 14;
+    private final int DEFAULT_RETURN_PERIOD = 30;
     
     public LocalDate getReturnDate(LocalDate borrowDate) {
         LocalDate returnDate = borrowDate.plusDays(DEFAULT_RETURN_PERIOD);
