@@ -4,9 +4,11 @@ import com.gr2.pojos.Book;
 import com.gr2.pojos.BorrowDetail;
 import com.gr2.services.BookService;
 import com.gr2.services.BorrowDetailService;
+import com.gr2.utils.MessageBox;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -94,7 +96,12 @@ public class ReturnBookController implements Initializable {
                         btn.setOnAction(e -> {
                             BookService sv = new BookService();
                             BorrowDetail borrowBook = (BorrowDetail) this.getTableRow().getItem(); // lay ra doi tuong book trong hang
-                            System.out.print(borrowBook.getBookId());
+                            int late = (int)Math.abs(Math.floor(LocalDate.now().getDayOfYear()) - Math.floor(borrowBook.getReturnDate().getDayOfYear()));
+                            if (late >= 1) {
+                                String warnMsg = "Returned book late for " + late + "days\n"
+                                        + "Penalty " + (5000 * late) + " dong."; 
+                                MessageBox.getMessageBox("LATE RETURN",warnMsg , Alert.AlertType.WARNING).show();
+                            }
                             int bookId = borrowBook.getBookId(); // lay ra bookId    
                             try {
                                 sv.returnBook(bookId);
