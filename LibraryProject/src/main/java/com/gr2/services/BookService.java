@@ -229,6 +229,22 @@ public class BookService {
 
         }
     }
+    public boolean isBookReturn(String userId) throws SQLException{
+        try(Connection conn = JdbcUtils.getConn()){
+            String sql = "select * from borrow_detail where user_id=? and is_return=?";
+            
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, userId);
+            stm.setBoolean(2, false);
+            
+            ResultSet rs = stm.executeQuery();
+            
+            if(rs.next()){
+                return false;
+            }
+        }
+        return true;
+    }
     
     public boolean isLendMoreFiveBook(String userID) throws SQLException{
         int lendBooksQuantity = 0;

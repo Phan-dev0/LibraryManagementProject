@@ -129,6 +129,10 @@ public class selectUserBorrowController implements Initializable {
                                 try {
                                    userId = userService.getUserIdByCardId(cardId);
                                    
+                                   if(!bookService.isBookReturn(userId)){
+                                       lbNotify.setText("You must return all the book you borrowed");
+                                       return;
+                                   }
                                    if(bookService.isLendMoreFiveBook(userId)){
                                        lbNotify.setText("Borrowed more than 5 books");
                                        return;
