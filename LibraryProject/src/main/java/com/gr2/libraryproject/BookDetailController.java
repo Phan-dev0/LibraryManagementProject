@@ -5,25 +5,17 @@
 package com.gr2.libraryproject;
 
 import com.gr2.pojos.Book;
-import com.gr2.pojos.BorrowDetail;
-import com.gr2.pojos.Reservation;
+import com.gr2.pojos.Category;
 import com.gr2.pojos.User;
 import com.gr2.services.BookService;
 import com.gr2.services.BorrowDetailService;
+import com.gr2.services.CategoryService;
 import com.gr2.services.ReservationService;
 import java.io.IOException;
 import com.gr2.services.UserService;
-import com.gr2.utils.DateUtils;
 import com.gr2.utils.MessageBox;
 import java.net.URL;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +33,6 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 /**
  * FXML Controller class
@@ -79,18 +70,18 @@ public class BookDetailController implements Initializable {
     private Button btnCancel;
 
     private int Id;
+    private String reserveUserID;
 
     UserSession session = UserSession.getSession();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
 
-        String subject = session.getUserRole();
         String studentSubject = "STUDENT";
 
         if (session.getUserRole().equals(studentSubject)) {
             btnLend.setVisible(false);
+            btnReserve.setVisible(true);
         }
 
         this.btnReserve.setOnAction(evt -> {
@@ -103,8 +94,26 @@ public class BookDetailController implements Initializable {
         });
         this.btnLend.setOnAction(evt -> {
             try {
-
-                lendBook(evt);
+                BorrowDetailService borrowDetailService = new BorrowDetailService();
+                if (session.getUserRole().equals("ADMIN") && this.getReserUserID() != null) {
+                    if (borrowDetailService.lendBookBaseOnBookId(this.getReserUserID(), this.Id)) {
+                        MessageBox.getMessageBox("INFO", "Lend Book Successfully!", Alert.AlertType.INFORMATION).show();
+                        App primaryPage = new App();
+                        if (primaryPage.getStage().isShowing()) {
+                            try {
+                                primaryPage.changeScene("primary");
+                            } catch (IOException ex) {
+                                Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        Stage detailStage = (Stage) ((Node) evt.getSource()).getScene().getWindow();
+                        detailStage.close();
+                    } else {
+                        MessageBox.getMessageBox("ERROR", "Lend Book Failed!", Alert.AlertType.ERROR);
+                    }
+                } else {
+                    lendBook(evt);
+                }
 
             } catch (SQLException | IOException ex) {
                 MessageBox.getMessageBox("ERROR", ex.getMessage(), Alert.AlertType.ERROR).show();
@@ -124,7 +133,8 @@ public class BookDetailController implements Initializable {
 
     }
 
-    public void setBook(Book book) {
+    public void setBook(Book book) throws SQLException {
+        CategoryService cateService = new CategoryService();
         this.Id = book.getId();
         this.lbTitle.setText(book.getTitle());
         this.lbAuthors.setText(book.getAuthors());
@@ -134,6 +144,9 @@ public class BookDetailController implements Initializable {
         this.txtImport.setText(book.getImportDate().toString());
         this.txtState.setText(book.getState());
         this.txtLoc.setText(book.getLocation());
+        Category cate = cateService.getCategoryById(book.getCategoryId());
+        this.txtCate.setText(cate.getName());
+        
     }
 
     public void lendBook(ActionEvent e) throws SQLException, IOException {
@@ -143,15 +156,15 @@ public class BookDetailController implements Initializable {
         loader.setLocation(getClass().getResource("selectUserBorrowBook.fxml"));
         Parent bookViewParent = loader.load();
         Stage dialog = new Stage();
-        
+
         Scene scene = new Scene(bookViewParent);
         selectUserBorrowController controller = loader.getController();
         controller.setStage(mainStage);
-        
+
         controller.setId(Id);
-        
+
         dialog.setTitle("Select the borrow one ");
-        
+
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(mainStage);
         dialog.setScene(scene);
@@ -224,12 +237,24 @@ public class BookDetailController implements Initializable {
 
     public void hideReserve() throws SQLException {
         BookService bookService = new BookService();
-        this.btnReserve.setVisible(!(bookService.getBookById(this.Id).getState().equals("RESERVED")));
+        if (session.getUserRole().equals("STUDENT")) {
+            this.btnReserve.setVisible(!(bookService.getBookById(this.Id).getState().equals("RESERVED")));
+        }
 
     }
 
     public void showCancel() throws SQLException {
         BookService bookService = new BookService();
+        if (session.getUserRole().equals("STUDENT")) {
         this.btnCancel.setVisible(bookService.getBookById(this.Id).getState().equals("RESERVED"));
+        }
+    }
+
+    public void setReserveUserID(String id) {
+        this.reserveUserID = id;
+    }
+
+    public String getReserUserID() {
+        return reserveUserID;
     }
 }

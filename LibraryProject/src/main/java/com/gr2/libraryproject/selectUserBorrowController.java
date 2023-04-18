@@ -141,16 +141,11 @@ public class selectUserBorrowController implements Initializable {
                                 } catch (SQLException ex) {
                                     Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
                                 }
-                               LocalDate borrowDate = LocalDate.now();
-                               LocalDate returnDate = dateUtils.getReturnDate(borrowDate);
-                                
                                
-                               
-                               BorrowDetail borrowBook = new BorrowDetail(borrowDate, returnDate);
                                BorrowDetailService lendBook = new BorrowDetailService();
                                
                                 try {
-                                    lendBook.lendBookBaseOnBookId(borrowBook, userId, bookId);
+                                    lendBook.lendBookBaseOnBookId(userId, bookId);
                                 } catch (SQLException ex) {
                                     Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
                                 }

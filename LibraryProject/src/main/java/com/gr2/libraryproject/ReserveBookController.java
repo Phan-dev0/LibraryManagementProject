@@ -116,6 +116,8 @@ public class ReserveBookController implements Initializable {
                                 controller.setBook(bookService.getBookById(currentBookId));
                                 controller.hideReserve();
                                 controller.showCancel();
+                                String userID = tbReserve.getItems().get(this.getTableRow().getIndex()).getUserId();
+                                controller.setReserveUserID(userID);
                                 dialog.setTitle("Book information");
                                 dialog.initModality(Modality.APPLICATION_MODAL);
 
@@ -154,7 +156,7 @@ public class ReserveBookController implements Initializable {
         Instant reservationTime = reservation.getCreatedDate().toInstant(ZoneOffset.of("+7"));
         Duration timeElapsed = Duration.between(currentTime, reservationTime);
         double hours = (double)timeElapsed.toSeconds()/ 3600;
-        return Math.abs(hours) >= 24;
+        return Math.abs(hours) >= 48;
     }
 
 }

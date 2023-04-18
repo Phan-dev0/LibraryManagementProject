@@ -43,6 +43,8 @@ public class SideBarController implements Initializable {
     private Button btnNavReturnBook;
     @FXML
     private Button btnNavHistoryBook;
+    @FXML
+    private Button btnStats;
 
     UserSession session = UserSession.getSession();
 
@@ -56,6 +58,7 @@ public class SideBarController implements Initializable {
         if (session.getUserRole().equals(studentSubject)) {
             btnNavReturnBook.setVisible(false);
             btnNavHistoryBook.setVisible(false);
+            btnStats.setVisible(false);
         }
 
         btnCard.setOnAction(evt -> {
