@@ -96,7 +96,10 @@ public class ReturnBookController implements Initializable {
                         btn.setOnAction(e -> {
                             BookService sv = new BookService();
                             BorrowDetail borrowBook = (BorrowDetail) this.getTableRow().getItem(); // lay ra doi tuong book trong hang
-                            int late = (int)Math.abs(Math.floor(LocalDate.now().getDayOfYear()) - Math.floor(borrowBook.getReturnDate().getDayOfYear()));
+                            int late = (int)(Math.floor(LocalDate.now().getDayOfYear()) - Math.floor(borrowBook.getReturnDate().getDayOfYear()));
+                            System.out.println(borrowBook.getBorrowDate());
+                            System.out.println(borrowBook.getReturnDate());
+                            System.out.println(late);
                             if (late >= 1) {
                                 String warnMsg = "Returned book late for " + late + "days\n"
                                         + "Penalty " + (5000 * late) + " dong."; 

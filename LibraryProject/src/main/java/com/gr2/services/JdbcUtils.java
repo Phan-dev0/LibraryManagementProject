@@ -1,4 +1,4 @@
-/*
+ /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
@@ -26,6 +26,6 @@ public class JdbcUtils {
     
     public static Connection getConn() throws SQLException {
         String username = "root";
-        String password = "123456789";
+        String password = "0308110299Go";
         return DriverManager.getConnection("jdbc:mysql://localhost/librarymanagement",username , password);    }
 }
