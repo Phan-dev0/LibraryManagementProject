@@ -46,4 +46,21 @@ public class CategoryService {
         }
         return categoryId;
     }
+    
+    public Category getCategoryById(int id) throws SQLException {
+        Category cate = null;
+        try (Connection conn = JdbcUtils.getConn()) {
+            
+            String sql = "select * from category where id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setInt(1, id);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                cate = new Category(rs.getInt("id"), rs.getString("name"));
+                
+            }
+            
+        }
+        return cate;
+    }
 }

@@ -15,7 +15,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -58,7 +61,7 @@ public class PrimaryController implements Initializable {
     private RadioButton rdCategory;
     @FXML
     private Label lbname;
-    @FXML 
+    @FXML
     private Button btnAddBook;
     @FXML
     private Button btnUpdateBook;
@@ -66,12 +69,9 @@ public class PrimaryController implements Initializable {
     private Button btnDeleteBook;
     @FXML
     private Button btnLendAll;
-    
-//    List<Book> books = new ArrayList<>();
-//    List<CheckBox> checkBoxs = new ArrayList<>();
-//    
+  
     UserSession session = UserSession.getSession();
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         String subject = session.getUserRole();
@@ -83,7 +83,7 @@ public class PrimaryController implements Initializable {
             btnUpdateBook.setVisible(false);
             btnLendAll.setVisible(false);
         }
-        
+
         ToggleGroup criteriaToggle = new ToggleGroup();
         this.rdTitle.setToggleGroup(criteriaToggle);
         this.rdAuthors.setToggleGroup(criteriaToggle);
@@ -93,19 +93,7 @@ public class PrimaryController implements Initializable {
 
             this.loadBooks(null, ((RadioButton) criteriaToggle.getSelectedToggle()).getText());
             this.loadTableColumns();
-//            List<TableColumn< Book, ?>> listTable = tbBooks.getColumns();
-//            
-//            TableColumn<Book, ?> checkBoxColumn = listTable.get(listTable.size() - 1);
-//            
-//           
-//            for(Book item: tbBooks.getItems()){
-//                Node nodeCell = checkBoxColumn.getCellObservableValue(item);
-//                CheckBox checkBoxCell = (CheckBox) nodeCell;
-//                if(checkBoxCell.isSelected()){
-//                    
-//                }
-//            }
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -132,7 +120,7 @@ public class PrimaryController implements Initializable {
 //        });
 
     }
-    
+
     private void loadTableColumns() {
         TableColumn colTitle = new TableColumn("Title");
         colTitle.setCellValueFactory(new PropertyValueFactory("title"));
@@ -143,9 +131,9 @@ public class PrimaryController implements Initializable {
         TableColumn colYear = new TableColumn("Year");
         colYear.setCellValueFactory(new PropertyValueFactory("publishedYear"));
         colYear.setPrefWidth(70);
-        TableColumn colCate = new TableColumn("Category");
+        TableColumn colCate = new TableColumn("Cate");
         colCate.setCellValueFactory(new PropertyValueFactory("categoryId"));
-        colCate.setPrefWidth(100);
+        colCate.setPrefWidth(50);
         TableColumn colDetail = new TableColumn();
 
         colDetail.setCellFactory(c -> {
@@ -192,28 +180,41 @@ public class PrimaryController implements Initializable {
 
             return cell;
         });
-//        TableColumn colCheck = new TableColumn();
-//        colCheck.setPrefWidth(50);
-//         colDetail.setCellFactory(c -> {
-//            TableCell<Book, CheckBox> cell = new TableCell<>() {
-//                @Override
-//                protected void updateItem(CheckBox item, boolean empty) {
-//                    super.updateItem(item, empty);
-//                    if (!empty) {
-//                        CheckBox checkBox  = new CheckBox();
-//                        this.setGraphic(checkBox);
-//                        
-//                    } else {
-//                        this.setGraphic(null);
-//                    }
-//                }
-//            };
-//
-//            return cell;
-//        });
-//            
-            
-        this.tbBooks.getColumns().addAll(colTitle, colAuthors, colYear, colCate, colDetail);
+        TableColumn<Book, Boolean> colCheck = new TableColumn();
+        colCheck.setPrefWidth(50);
+
+        colCheck.setCellValueFactory(data -> {
+            SimpleBooleanProperty checkProperty = new SimpleBooleanProperty();
+
+            checkProperty.setValue(false);
+            checkProperty.addListener((observable, oldValue, newValue) -> {
+                data.getValue().setSelected(newValue);
+            });
+            return checkProperty;
+        });
+        colCheck.setCellFactory(c -> {
+            TableCell<Book, Boolean> cell = new TableCell<>() {
+                private final CheckBox checkBox = new CheckBox();
+
+                @Override
+                protected void updateItem(Boolean item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        
+                        this.setGraphic(null);
+
+                    } else {
+                        checkBox.setSelected(item);
+                        this.setGraphic(checkBox);
+                    }
+                }
+
+            };
+            return cell;
+
+        });
+
+        this.tbBooks.getColumns().addAll(colTitle, colAuthors, colYear, colCate, colDetail, colCheck);
 
     }
 
@@ -223,63 +224,69 @@ public class PrimaryController implements Initializable {
         this.tbBooks.getItems().clear();
         this.tbBooks.setItems(FXCollections.observableList(books));
     }
-    
-    @FXML 
-    public void lendAll(ActionEvent e){
-        
-    }
-    
-    
-    @FXML 
-    public void addBook(ActionEvent e) throws IOException{
-        Stage mainStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-          FXMLLoader loader = new FXMLLoader();
-          loader.setLocation(getClass().getResource("addBtnPage.fxml"));
-          Parent addBookViewParent = loader.load();
-          Stage dialog = new Stage();
-          Scene scene = new Scene(addBookViewParent);
-          
 
-          dialog.setTitle("Select the borrow one ");
-          dialog.initModality(Modality.APPLICATION_MODAL);
-          dialog.initOwner(mainStage);
-          dialog.setScene(scene);
-          dialog.show();
-    }
-    
     @FXML
-    public void deleteBook(ActionEvent e) throws SQLException{
+    public void lendAll(ActionEvent e) {
+        
+        ObservableList<Book> selectedBooks = FXCollections.observableArrayList();
+        for (Book b : tbBooks.getItems()) {
+            if (b.isSelected()) {
+                selectedBooks.add(b);
+            }
+        }
+        System.out.println(selectedBooks.toString());
+        tbBooks.getItems().forEach(book -> System.out.println(book.isSelected()));
+    }
+
+    @FXML
+    public void addBook(ActionEvent e) throws IOException {
+        Stage mainStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("addBtnPage.fxml"));
+        Parent addBookViewParent = loader.load();
+        Stage dialog = new Stage();
+        Scene scene = new Scene(addBookViewParent);
+
+        dialog.setTitle("Select the borrow one ");
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(mainStage);
+        dialog.setScene(scene);
+        dialog.show();
+    }
+
+    @FXML
+    public void deleteBook(ActionEvent e) throws SQLException {
         BookService bookService = new BookService();
         Book deleleBook = tbBooks.getSelectionModel().getSelectedItem();
         int bookId = deleleBook.getId();
         bookService.deleteBook(bookId);
-        
+
         tbBooks.getItems().removeAll(tbBooks.getSelectionModel().getSelectedItem());
-        
+
     }
-    
-    @FXML 
-    public void updateBook(ActionEvent e) throws IOException, SQLException{
-        if(tbBooks.getSelectionModel().getSelectedItem() == null){
-          return;
+
+    @FXML
+    public void updateBook(ActionEvent e) throws IOException, SQLException {
+        if (tbBooks.getSelectionModel().getSelectedItem() == null) {
+            return;
         }
-        
+
         BookService bookService = new BookService();
         Book updateBook = tbBooks.getSelectionModel().getSelectedItem();
-        
-        Stage mainStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-          FXMLLoader loader = new FXMLLoader();
-          loader.setLocation(getClass().getResource("updateBtnPage.fxml"));
-          Parent addBookViewParent = loader.load();
-          Stage dialog = new Stage();
-          Scene scene = new Scene(addBookViewParent);
-          addBookController controller = loader.getController();
-          controller.setBook(updateBook);
 
-          dialog.setTitle("Select the borrow one ");
-          dialog.initModality(Modality.APPLICATION_MODAL);
-          dialog.initOwner(mainStage);
-          dialog.setScene(scene);
-          dialog.show();
+        Stage mainStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("updateBtnPage.fxml"));
+        Parent addBookViewParent = loader.load();
+        Stage dialog = new Stage();
+        Scene scene = new Scene(addBookViewParent);
+        addBookController controller = loader.getController();
+        controller.setBook(updateBook);
+
+        dialog.setTitle("Select the borrow one ");
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(mainStage);
+        dialog.setScene(scene);
+        dialog.show();
     }
 }
