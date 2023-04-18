@@ -10,6 +10,7 @@ import com.gr2.pojos.User;
 import com.gr2.services.FacultyService;
 import com.gr2.services.LibraryCardService;
 import com.gr2.services.UserService;
+import com.gr2.utils.MessageBox;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -25,6 +26,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -150,7 +152,7 @@ public class RegisterController implements Initializable {
             User user = new User(username, password, card.getId());
 
             addAccount.addUser(card, user);
-
+            MessageBox.getMessageBox("Success", "Register success!", Alert.AlertType.INFORMATION).show();
         } catch (SQLException ex) {
             Logger.getLogger(RegisterController.class.getName()).log(Level.SEVERE, null, ex);
         }

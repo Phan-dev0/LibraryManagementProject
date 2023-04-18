@@ -95,6 +95,17 @@ public class BookDetailController implements Initializable {
         this.btnLend.setOnAction(evt -> {
             try {
                 BorrowDetailService borrowDetailService = new BorrowDetailService();
+                BookService bookService = new BookService();
+                
+                if(!bookService.isBookReturn(getReserUserID())){
+                    MessageBox.getMessageBox("ERROR", "This account must return all the book that is borrowed", Alert.AlertType.ERROR).show();
+                    return;
+                }
+                if(bookService.isLendMoreFiveBook(getReserUserID()) >= 5){
+                   MessageBox.getMessageBox("ERROR", "This account borrowed more than 5 books", Alert.AlertType.ERROR).show();
+                   return;
+                }
+                
                 if (session.getUserRole().equals("ADMIN") && this.getReserUserID() != null) {
                     if (borrowDetailService.lendBookBaseOnBookId(this.getReserUserID(), this.Id)) {
                         MessageBox.getMessageBox("INFO", "Lend Book Successfully!", Alert.AlertType.INFORMATION).show();

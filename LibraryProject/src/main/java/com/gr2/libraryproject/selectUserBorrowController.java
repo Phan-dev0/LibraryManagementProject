@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -60,6 +61,8 @@ public class selectUserBorrowController implements Initializable {
     
     
     private int bookId;
+    private ArrayList<Integer> bookIds;
+    private boolean whatTypeOfLend = false;
     
     UserService userService = new UserService();
     
@@ -68,6 +71,13 @@ public class selectUserBorrowController implements Initializable {
     }
     public void setId(int id){
         this.bookId = id;
+    }
+    public void setBookIds(List<Integer> bookIds){
+        this.bookIds = new ArrayList<>();
+        whatTypeOfLend = true;
+        for(int bookId: bookIds){
+            this.bookIds.add(bookId);
+        }
     }
     
    @Override
@@ -130,11 +140,11 @@ public class selectUserBorrowController implements Initializable {
                                    userId = userService.getUserIdByCardId(cardId);
                                    
                                    if(!bookService.isBookReturn(userId)){
-                                       lbNotify.setText("You must return all the book you borrowed");
+                                       MessageBox.getMessageBox("ERROR", "This account must return all the book that is borrowed", Alert.AlertType.ERROR).show();
                                        return;
                                    }
-                                   if(bookService.isLendMoreFiveBook(userId)){
-                                       lbNotify.setText("Borrowed more than 5 books");
+                                   if(bookService.isLendMoreFiveBook(userId) >= 5){
+                                       MessageBox.getMessageBox("ERROR", "This account borrowed more than 5 books", Alert.AlertType.ERROR).show();
                                        return;
                                    }
                                    
@@ -144,14 +154,23 @@ public class selectUserBorrowController implements Initializable {
                                
                                BorrowDetailService lendBook = new BorrowDetailService();
                                
-                                try {
-                                    lendBook.lendBookBaseOnBookId(userId, bookId);
-                                } catch (SQLException ex) {
-                                    Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                                
+                               if(!whatTypeOfLend){
+                                    try {
+                                        lendBook.lendBookBaseOnBookId(userId, bookId);
+                                        detailStage.close();
+                                    } catch (SQLException ex) {
+                                        Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                               }else{
+                                   try {
+                                       lendBook.lendMultiBooksBaseOnBookId(userId, bookIds);
+                                       whatTypeOfLend = false;
+                                   } catch (SQLException ex) {
+                                       Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
+                                   }
+                               }
+                               
                                 Stage selectedStage = (Stage) ((Node) evt.getSource()).getScene().getWindow();
-                                detailStage.close();
                                 selectedStage.close();
                                 App primaryPage = new App();
                                 if (primaryPage.getStage().isShowing()) {

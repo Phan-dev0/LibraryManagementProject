@@ -180,6 +180,8 @@ public class PrimaryController implements Initializable {
 
             return cell;
         });
+        
+       
         TableColumn<Book, Boolean> colCheck = new TableColumn();
         colCheck.setPrefWidth(50);
 
@@ -204,9 +206,14 @@ public class PrimaryController implements Initializable {
                         this.setGraphic(null);
 
                     } else {
-                        checkBox.setSelected(item);
+//                        checkBox.setSelected(item);
                         this.setGraphic(checkBox);
                     }
+                    
+                    checkBox.setOnAction(e ->{
+                         Book b = tbBooks.getItems().get(this.getTableRow().getIndex());
+                         b.setSelected(true);
+                    });
                 }
 
             };
@@ -226,16 +233,54 @@ public class PrimaryController implements Initializable {
     }
 
     @FXML
-    public void lendAll(ActionEvent e) {
+    public void lendAll(ActionEvent e) throws IOException {
         
+        int quantityOfBooks = 0;
         ObservableList<Book> selectedBooks = FXCollections.observableArrayList();
-        for (Book b : tbBooks.getItems()) {
+        ObservableList<Book> allSelectedBooks = tbBooks.getItems();
+        ArrayList<Integer> bookIds = new ArrayList<>();
+       
+        for (Book b : allSelectedBooks) {
             if (b.isSelected()) {
-                selectedBooks.add(b);
+                bookIds.add(b.getId());
+                quantityOfBooks++;
             }
         }
-        System.out.println(selectedBooks.toString());
-        tbBooks.getItems().forEach(book -> System.out.println(book.isSelected()));
+        
+//        for(int i : bookIds){
+//            System.out.println(i);
+//        }
+
+        if(quantityOfBooks == 0){
+            MessageBox.getMessageBox("ERROR", "No books is choosed", Alert.AlertType.ERROR).show();
+            return;
+        }else if(quantityOfBooks >= 6){
+            MessageBox.getMessageBox("ERROR", "Can't borrow more than 5 books ", Alert.AlertType.ERROR).show();
+            return;
+        }
+        
+        Stage mainStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("selectUserBorrowBook.fxml"));
+        Parent bookViewParent = loader.load();
+        Stage dialog = new Stage();
+
+        Scene scene = new Scene(bookViewParent);
+        selectUserBorrowController controller = loader.getController();
+        controller.setStage(mainStage);
+        
+        controller.setBookIds(bookIds);
+        
+//        controller.setId(Id);
+
+        dialog.setTitle("Select the borrow one ");
+
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(mainStage);
+        dialog.setScene(scene);
+        dialog.show();
+//        System.out.println(selectedBooks.toString());
+//        tbBooks.getItems().forEach(book -> System.out.println(book.isSelected()));
     }
 
     @FXML

@@ -57,8 +57,6 @@ public class SideBarController implements Initializable {
 
         if (session.getUserRole().equals(studentSubject)) {
             btnNavReturnBook.setVisible(false);
-            btnNavHistoryBook.setVisible(false);
-            btnStats.setVisible(false);
         }
 
         btnCard.setOnAction(evt -> {
@@ -87,13 +85,13 @@ public class SideBarController implements Initializable {
                 Logger.getLogger(SideBarController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        this.btnNavHistoryBook.setOnAction(evt -> {
-            try {
-                historyPage();
-            } catch (IOException ex) {
-                Logger.getLogger(SideBarController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
+//        this.btnNavHistoryBook.setOnAction(evt -> {
+//            try {
+//                historyPage();
+//            } catch (IOException ex) {
+//                Logger.getLogger(SideBarController.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        });
         this.btnSave.setOnAction(evt -> {
             try {
                 saveBooksPage();
