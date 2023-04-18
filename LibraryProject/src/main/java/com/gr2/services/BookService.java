@@ -246,7 +246,7 @@ public class BookService {
         return true;
     }
     
-    public boolean isLendMoreFiveBook(String userID) throws SQLException{
+    public int isLendMoreFiveBook(String userID) throws SQLException{
         int lendBooksQuantity = 0;
         
         try(Connection conn = JdbcUtils.getConn()){
@@ -275,8 +275,7 @@ public class BookService {
             
         }
         System.out.println(lendBooksQuantity);
-        if(lendBooksQuantity >= 5)
-            return true;
-        return false;
+        
+        return lendBooksQuantity;
     }
 }

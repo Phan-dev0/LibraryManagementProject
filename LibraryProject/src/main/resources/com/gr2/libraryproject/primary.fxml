@@ -59,22 +59,6 @@
                         <FontAwesomeIcon fill="WHITE" glyphName="UNDO" wrappingWidth="17.60000705718994" />
                      </graphic>
                   </Button>
-                  <Button fx:id="btnNavHistoryBook" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="nav" text="History">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                     <graphic>
-                        <FontAwesomeIcon fill="WHITE" glyphName="HISTORY" />
-                     </graphic>
-                  </Button>
-                  <Button fx:id="btnStats" alignment="BASELINE_LEFT" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="nav" text="Stats">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                     <graphic>
-                        <FontAwesomeIcon fill="WHITE" glyphName="FILE" text="" />
-                     </graphic>
-                  </Button>
                </children>
             </VBox>
             <Button fx:id="btnCard" layoutX="34.0" layoutY="436.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="130.0" text="Library Card" />
