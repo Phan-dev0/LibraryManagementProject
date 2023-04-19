@@ -5,6 +5,7 @@
 package com.gr2.pojos;
 
 import java.time.LocalDateTime;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
@@ -15,6 +16,7 @@ public class Reservation {
     private LocalDateTime createdDate;
     private int bookId;
     private String userId;
+    private SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
     
     public Reservation() {};
     public Reservation(LocalDateTime createdDate, int bookId, String userId) {
@@ -84,5 +86,16 @@ public class Reservation {
      */
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+    
+     public boolean isSelected() {
+        return selected.get();
+    }
+
+    /**
+     * @param selected the selected to set
+     */
+    public void setSelected(boolean selected) {
+        this.selected.set(selected);
     }
 }

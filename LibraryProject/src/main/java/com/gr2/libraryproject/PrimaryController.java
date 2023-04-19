@@ -212,6 +212,10 @@ public class PrimaryController implements Initializable {
                     
                     checkBox.setOnAction(e ->{
                          Book b = tbBooks.getItems().get(this.getTableRow().getIndex());
+                         if(b.isSelected()){
+                             b.setSelected(false);
+                             return;
+                         }
                          b.setSelected(true);
                     });
                 }
@@ -301,6 +305,11 @@ public class PrimaryController implements Initializable {
 
     @FXML
     public void deleteBook(ActionEvent e) throws SQLException {
+         if (tbBooks.getSelectionModel().getSelectedItem() == null) {
+            MessageBox.getMessageBox("ERROR", "Select book to delete", Alert.AlertType.ERROR).show();
+            return;
+        }
+         
         BookService bookService = new BookService();
         Book deleleBook = tbBooks.getSelectionModel().getSelectedItem();
         int bookId = deleleBook.getId();
@@ -313,6 +322,7 @@ public class PrimaryController implements Initializable {
     @FXML
     public void updateBook(ActionEvent e) throws IOException, SQLException {
         if (tbBooks.getSelectionModel().getSelectedItem() == null) {
+            MessageBox.getMessageBox("ERROR", "Select book to update", Alert.AlertType.ERROR).show();
             return;
         }
 

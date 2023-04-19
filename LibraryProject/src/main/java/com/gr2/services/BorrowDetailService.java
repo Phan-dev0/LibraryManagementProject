@@ -24,11 +24,19 @@ public class BorrowDetailService {
     
     public boolean lendMultiBooksBaseOnBookId(String userId, ArrayList<Integer> bookIds) throws SQLException{
         BookService bookService = new BookService();
+        ReservationService reservationService = new ReservationService();
+        
         try(Connection conn = JdbcUtils.getConn()){
             DateUtils dateUtils = new DateUtils();
             BorrowDetail borrowBook = new BorrowDetail(LocalDate.now(), dateUtils.getReturnDate(LocalDate.now()));
             for(int bookId: bookIds){
-//                System.out.println(bookId);
+//              System.out.println(bookId);
+                Book b = bookService.getBookById(bookId);
+                if (b.getState().equals("RESERVED")) {
+                    if (!reservationService.deleteReservation(bookId, userId)) {
+                        MessageBox.getMessageBox("ERROR", "Remove Reservation Failed", Alert.AlertType.WARNING).show();
+                    }
+                }
                 String sql = "update book set state=? where id=?";
                 PreparedStatement stm1 = conn.prepareCall(sql);
                 stm1.setString(1, "BORROWED");

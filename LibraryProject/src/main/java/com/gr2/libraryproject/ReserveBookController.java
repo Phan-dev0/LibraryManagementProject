@@ -7,7 +7,9 @@ package com.gr2.libraryproject;
 import com.gr2.pojos.Book;
 import com.gr2.pojos.Reservation;
 import com.gr2.services.BookService;
+import com.gr2.services.BorrowDetailService;
 import com.gr2.services.ReservationService;
+import com.gr2.utils.MessageBox;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -16,19 +18,25 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -44,9 +52,21 @@ public class ReserveBookController implements Initializable {
 
     @FXML
     TableView<Reservation> tbReserve;
-
+    @FXML
+    private Button btnLendAll;
+    
+    private List<String> userIds = new ArrayList<>();
+    
+    UserSession session = UserSession.getSession();
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        String subject = session.getUserRole();
+        String studentSubject = "STUDENT";
+
+        if (session.getUserRole().equals(studentSubject)) {
+            btnLendAll.setVisible(false);
+        }
+        
         ReservationService reservationService = new ReservationService();
         List<Reservation> reservations;
         try {
@@ -139,10 +159,109 @@ public class ReserveBookController implements Initializable {
 
             return cell;
         });
-        this.tbReserve.getColumns().addAll(colId, colCreatedDate, colBookId, colUserId, colLend);
+        
+        TableColumn<Reservation, Boolean> colCheck = new TableColumn();
+        colCheck.setPrefWidth(50);
+
+        colCheck.setCellValueFactory(data -> {
+            SimpleBooleanProperty checkProperty = new SimpleBooleanProperty();
+
+            checkProperty.setValue(false);
+            checkProperty.addListener((observable, oldValue, newValue) -> {
+                data.getValue().setSelected(newValue);
+            });
+            return checkProperty;
+        });
+        colCheck.setCellFactory(c -> {
+            TableCell<Reservation, Boolean> cell = new TableCell<>() {
+                private final CheckBox checkBox = new CheckBox();
+
+                @Override
+                protected void updateItem(Boolean item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        
+                        this.setGraphic(null);
+
+                    } else {
+//                        checkBox.setSelected(item);
+                        this.setGraphic(checkBox);
+                    }
+                    
+                    checkBox.setOnAction(e ->{
+                         Reservation b = tbReserve.getItems().get(this.getTableRow().getIndex());
+                         if(b.isSelected()){
+                             String deleteUserId = b.getUserId();
+                             userIds.removeAll(List.of(deleteUserId));
+                             b.setSelected(false);
+                             return;
+                         }
+                         b.setSelected(true);
+                         userIds.add(b.getUserId());
+                    });
+                }
+
+            };
+            return cell;
+
+        });
+        this.tbReserve.getColumns().addAll(colId, colCreatedDate, colBookId, colUserId, colLend, colCheck);
 
     }
-
+    
+    @FXML
+    public void lendAll(ActionEvent e) throws IOException, SQLException{
+        int quantityOfBooks = 0;
+        BorrowDetailService bookDetailService = new BorrowDetailService();
+        ObservableList<Reservation> allSelectedBooks = tbReserve.getItems();
+        ArrayList<Integer> bookIds = new ArrayList<>();
+       
+        for (Reservation b : allSelectedBooks) {
+            if (b.isSelected()) {
+                bookIds.add(b.getBookId());
+                quantityOfBooks++;
+            }
+        }
+        
+        if(quantityOfBooks == 0){
+            MessageBox.getMessageBox("ERROR", "No books is choosed", Alert.AlertType.ERROR).show();
+            return;
+        }else if(quantityOfBooks >= 6){
+            MessageBox.getMessageBox("ERROR", "Can't borrow more than 5 books ", Alert.AlertType.ERROR).show();
+            return;
+        }
+        
+        String comfirmUserId = "";
+        String tempUserId = "";
+        boolean check = false;
+        for(String userId1: userIds){
+            comfirmUserId = userId1;
+            for(String userId2: userIds){
+                if(!comfirmUserId.equals(userId2)){
+                    check = true;
+                }
+            }
+        }
+        
+        if(check){
+            comfirmUserId = "";
+            MessageBox.getMessageBox("ERROR", "Can't lend to more than 1 user", Alert.AlertType.ERROR).show();
+            return;
+        }
+        
+        bookDetailService.lendMultiBooksBaseOnBookId(comfirmUserId, bookIds);
+        
+        App primaryPage = new App();
+        if (primaryPage.getStage().isShowing()) {
+            try {
+                primaryPage.changeScene("primary");
+            } catch (IOException ex) {
+                Logger.getLogger(selectUserBorrowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+    }
+    
     public void loadReservation() throws SQLException {
         ReservationService revService = new ReservationService();
         List<Reservation> reservations = revService.getReservations();
