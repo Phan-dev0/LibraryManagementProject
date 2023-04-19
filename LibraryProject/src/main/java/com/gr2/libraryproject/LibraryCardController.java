@@ -115,8 +115,8 @@ public class LibraryCardController implements Initializable {
                     } else {
                         libCard.setPhoneNumber(txtPhone.getText());
                     }
-                    Pattern addressPattern = Pattern.compile("^([\\w\\\\])*,\\s([\\w,\\s])*,\\s([\\w\\.\\s])+$");
-                    if (address == null || !addressPattern.matcher(address).matches()) {
+                    
+                    if (address == null) {
                         createErrorMsg(txtAddress, "Your new address is not valid!");
                     } else {
                         libCard.setAddress(txtAddress.getText());
