@@ -102,29 +102,36 @@ public class LibraryCardController implements Initializable {
                     String address = txtAddress.getText();
                     String email = txtEmail.getText();
                     String phoneNumber = txtPhone.getText();
-
+                    String errMsg = "";
                     Pattern emailPattern = Pattern.compile("^[\\w-\\.]+@([\\w-\\.])+[\\w-]{2,4}$");
-                    if (email == null || !emailPattern.matcher(email).matches()) {
+                    if (email == null || email.isEmpty() || !emailPattern.matcher(email).matches()) {
                         createErrorMsg(txtEmail, "Your new email is not valid!");
+                        errMsg += "The email you entered is not valid\n";
                     } else {
                         libCard.setEmail(txtEmail.getText());
                     }
                     Pattern phoneNumberPattern = Pattern.compile("^\\d{10,11}$");
-                    if (phoneNumber == null || !phoneNumberPattern.matcher(phoneNumber).matches()) {
+                    if (phoneNumber == null || phoneNumber.isEmpty() || !phoneNumberPattern.matcher(phoneNumber).matches()) {
                         createErrorMsg(txtPhone, "Your new phone number is not valid!");
+                        errMsg += "The phone number you entered is not valid\n";
                     } else {
                         libCard.setPhoneNumber(txtPhone.getText());
                     }
-                    Pattern addressPattern = Pattern.compile("^([\\w\\\\])*,\\s([\\w,\\s])*,\\s([\\w\\.\\s])+$");
-                    if (address == null || !addressPattern.matcher(address).matches()) {
+                    
+                    if (address == null || address.isEmpty()) {
                         createErrorMsg(txtAddress, "Your new address is not valid!");
+                        errMsg += "The address you entered is not valid\n";
                     } else {
                         libCard.setAddress(txtAddress.getText());
                     }
 
                     try {
                         if (libCardService.updateLibraryCard(libCard)) {
-                            MessageBox.getMessageBox("Info", "Update card successfully!", Alert.AlertType.INFORMATION).show();
+                            if(errMsg.isEmpty())
+                                MessageBox.getMessageBox("Info", "Update card successfully!", Alert.AlertType.INFORMATION).show();
+                            else {
+                                MessageBox.getMessageBox("Warning", "Your card updated successfully, but not fully updated because:\n" + errMsg, Alert.AlertType.WARNING).show();
+                            }
                         }
                         
                     } catch (SQLException ex) {
