@@ -87,9 +87,11 @@ public class RegisterController implements Initializable {
     private Label lbNotifyDate;
     @FXML
     private Label lbNotifyFaculty;
-
+   
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
         FacultyService fs = new FacultyService();
         try {
             List<Faculty> faculty = fs.getFaculties();
